@@ -82,7 +82,7 @@ export default function FundScreen({ onNavigate, onSeeAll }: FundScreenProps) {
       {/* Fund summary stats */}
       <div className="px-6 pt-6 flex flex-col gap-4">
         <p className="text-xs font-medium text-noku-text-dim uppercase tracking-[0.06em]">
-          Fund Summary
+          ESTATE POWER FUND SUMMARY
         </p>
         <div className="flex gap-2">
           {[

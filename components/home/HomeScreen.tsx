@@ -1,10 +1,119 @@
 "use client";
 
+import { useState } from "react";
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 import type { PaymentRecord } from "@/types/payment";
 
-const generatorImg =
-  "https://www.figma.com/api/mcp/asset/d8e6f15d-bda4-40e6-b464-de1731a5f261";
+const generatorImgOn      = "https://www.figma.com/api/mcp/asset/d8e6f15d-bda4-40e6-b464-de1731a5f261";
+const generatorImgOff     = "https://www.figma.com/api/mcp/asset/816aac98-de0e-4acb-bff1-ff283c0fc454";
+const generatorImgRationed = "https://www.figma.com/api/mcp/asset/69865f03-16bc-4349-a7ef-4c807d1cebbc";
+const generatorImgRepairs = "https://www.figma.com/api/mcp/asset/bad85627-c267-4bc3-9da4-228418d08c77";
+
+type GeneratorStatus = "on" | "off" | "rationed" | "repairs";
+
+const STATUS_ORDER: GeneratorStatus[] = ["on", "off", "rationed", "repairs"];
+
+const STATUS_CONFIG: Record<GeneratorStatus, {
+  cardBg: string;
+  cardBorder: string;
+  badgeBorder: string;
+  badgeTextColor: string;
+  badgeLabel: string;
+  badgeIcon: "zap" | "zap-off";
+  gradientColor: string;
+  imgSrc: string;
+  imgOpacity: number;
+  title: string;
+  titleColor: string;
+  subtitle: string;
+  subtitleColor: string;
+}> = {
+  on: {
+    cardBg: "var(--color-noku-brand-light)",
+    cardBorder: "var(--color-noku-brand-mid)",
+    badgeBorder: "var(--color-noku-brand-border)",
+    badgeTextColor: "var(--color-noku-green)",
+    badgeLabel: "Power: Generator",
+    badgeIcon: "zap",
+    gradientColor: "rgba(23,162,72,0.8)",
+    imgSrc: generatorImgOn,
+    imgOpacity: 0.8,
+    title: "7:00pm – 2:00am",
+    titleColor: "var(--color-noku-brand-deep)",
+    subtitle: "turns off in 5 hours",
+    subtitleColor: "var(--color-noku-brand-mid)",
+  },
+  off: {
+    cardBg: "#f4f4f0",
+    cardBorder: "#1d1d16",
+    badgeBorder: "#abab9c",
+    badgeTextColor: "#474739",
+    badgeLabel: "Power: Generator",
+    badgeIcon: "zap",
+    gradientColor: "rgba(71,71,57,0.7)",
+    imgSrc: generatorImgOff,
+    imgOpacity: 0.8,
+    title: "Generator Off",
+    titleColor: "#1d1d16",
+    subtitle: "Resumes 7pm",
+    subtitleColor: "#5b5b4b",
+  },
+  rationed: {
+    cardBg: "#fefce8",
+    cardBorder: "#ca8a04",
+    badgeBorder: "#ca8a04",
+    badgeTextColor: "#ca8a04",
+    badgeLabel: "Power: Generator (rationed)",
+    badgeIcon: "zap",
+    gradientColor: "rgba(202,138,4,0.8)",
+    imgSrc: generatorImgRationed,
+    imgOpacity: 0.8,
+    title: "7:00pm – 11:00 pm",
+    titleColor: "#5b5b4b",
+    subtitle: "From: 7:00 PM – 2:00 AM",
+    subtitleColor: "#5b5b4b",
+  },
+  repairs: {
+    cardBg: "#fef2f2",
+    cardBorder: "#dc2626",
+    badgeBorder: "#dc2626",
+    badgeTextColor: "#b91c1c",
+    badgeLabel: "Generator unavailable",
+    badgeIcon: "zap-off",
+    gradientColor: "rgba(220,38,38,0.6)",
+    imgSrc: generatorImgRepairs,
+    imgOpacity: 0.45,
+    title: "Repairs ongoing",
+    titleColor: "#2b2b22",
+    subtitle: "The committee is working on this",
+    subtitleColor: "#5b5b4b",
+  },
+};
+
+function ZapIcon({ color }: { color: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.167 1.167 2.333 7.583h4.084L5.833 12.833l5.834-6.416H7.583l.584-5.25Z" fill={color} stroke="none"/>
+    </svg>
+  );
+}
+
+function ZapOffIcon({ color }: { color: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 1l12 12" stroke={color}/>
+      <path d="M8.167 1.167 6.25 3.5M5.25 6.125 2.333 7.583h4.084L5.833 12.833l3.334-3.666M6.417 4.083l1.166-2.916" stroke={color}/>
+    </svg>
+  );
+}
+
+function CycleIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 6a5 5 0 0 1 8.5-3.5L11 1M11 1v3H8M11 6a5 5 0 0 1-8.5 3.5L1 11M1 11V8h3"/>
+    </svg>
+  );
+}
 
 function BellIcon() {
   return (
@@ -37,6 +146,17 @@ type HomeScreenProps = {
 };
 
 export default function HomeScreen({ isPaid, onPayNow, onViewReceipt, onViewPaymentReceipt, onNavigate, onSeeAll, onReportIssue, onNotifications }: HomeScreenProps) {
+  const [generatorStatus, setGeneratorStatus] = useState<GeneratorStatus>("on");
+
+  function cycleStatus() {
+    setGeneratorStatus((prev) => {
+      const idx = STATUS_ORDER.indexOf(prev);
+      return STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
+    });
+  }
+
+  const cfg = STATUS_CONFIG[generatorStatus];
+
   const recentPayments: PaymentItem[] = isPaid
     ? [
         { amount: "₦95,000", date: "Paid · Jun 4", period: "June 2026",  datePaid: "Jun 4, 2026",  channel: "In app" },
@@ -72,33 +192,52 @@ export default function HomeScreen({ isPaid, onPayNow, onViewReceipt, onViewPaym
       {/* Generator status card */}
       <div className="px-6 mt-6">
         <div
-          className="bg-noku-brand-light border border-noku-brand-mid rounded-2xl p-3 min-h-[120px] flex items-start relative overflow-hidden"
+          className="rounded-2xl p-3 min-h-[120px] flex items-start relative overflow-hidden"
+          style={{ backgroundColor: cfg.cardBg, border: `1px solid ${cfg.cardBorder}` }}
         >
           <div className="flex flex-col justify-between self-stretch z-10">
-            <div className="bg-white border border-noku-brand-border rounded-md px-1.5 py-0.5 flex items-center gap-1 self-start shadow-sm">
-              <img src="/icons/ZapIcon.svg" alt="" className="w-3.5 h-3.5" />
-              <span className="text-[10px] text-noku-green">Power: Generator</span>
+            {/* Badge */}
+            <div
+              className="bg-white rounded-md px-1.5 py-0.5 flex items-center gap-1 self-start shadow-sm"
+              style={{ border: `1px solid ${cfg.badgeBorder}` }}
+            >
+              {cfg.badgeIcon === "zap" ? (
+                <ZapIcon color={cfg.badgeTextColor} />
+              ) : (
+                <ZapOffIcon color={cfg.badgeTextColor} />
+              )}
+              <span className="text-[10px]" style={{ color: cfg.badgeTextColor }}>{cfg.badgeLabel}</span>
             </div>
+            {/* Text */}
             <div className="mt-auto">
-              <p className="text-sm font-medium text-noku-brand-deep">7:00pm – 2:00am</p>
-              <p className="text-[10px] text-noku-brand-mid mt-1">turns off in 5 hours</p>
+              <p className="text-sm font-medium" style={{ color: cfg.titleColor }}>{cfg.title}</p>
+              <p className="text-[10px] mt-1" style={{ color: cfg.subtitleColor }}>{cfg.subtitle}</p>
             </div>
           </div>
-          {/* Generator image */}
-          <div className="absolute right-0 top-0 h-full w-[175px] opacity-80 pointer-events-none">
+
+          {/* Generator image + gradient */}
+          <div
+            className="absolute right-0 top-0 h-full w-[175px] pointer-events-none"
+            style={{ opacity: cfg.imgOpacity }}
+          >
             <div
               className="absolute inset-0"
               style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(23,162,72,0.8) 0%, rgba(23,162,72,0) 70%)",
+                background: `radial-gradient(ellipse at center, ${cfg.gradientColor} 0%, transparent 70%)`,
               }}
             />
-            <img
-              src={generatorImg}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src={cfg.imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
           </div>
+
+          {/* Demo cycle button */}
+          <button
+            onClick={cycleStatus}
+            title="Cycle generator state (demo)"
+            className="absolute bottom-2 right-2 z-10 flex items-center gap-1 bg-white/70 backdrop-blur-sm border border-black/10 rounded-md px-1.5 py-1 text-[10px] text-noku-text-dim shadow-sm"
+          >
+            <CycleIcon />
+            cycle
+          </button>
         </div>
       </div>
 

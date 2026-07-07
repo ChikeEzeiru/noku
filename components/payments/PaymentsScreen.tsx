@@ -139,9 +139,14 @@ export default function PaymentsScreen({ isPaid, historyOnly, onPayNow, onNaviga
           Payment Method
         </p>
         <div className="flex gap-2">
-          <div className="flex-1 border border-noku-border-light rounded-lg p-3 flex flex-col gap-1 h-16 justify-center">
+          <div className="relative flex-1 rounded-lg p-3 flex flex-col gap-1 h-16 justify-center bg-white" style={{ border: "2px solid #2b2b22" }}>
             <img src={visaLogo} alt="Visa" className="h-6 w-[34px] object-contain" />
             <p className="text-xs text-noku-text-mid">**** **** **** 1234</p>
+            <div className="absolute top-2 right-2 w-4 h-4 rounded flex items-center justify-center" style={{ backgroundColor: "#2b2b22" }}>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1.667 5l2.5 2.5 4.166-5"/>
+              </svg>
+            </div>
           </div>
           <button
             onClick={onAddPaymentMethod}
