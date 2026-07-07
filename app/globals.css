@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --font-sans: "DM Sans", sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Brand greens */
+  --color-noku-green: #16803c;
+  --color-noku-brand-mid: #17a248;
+  --color-noku-brand-light: #dcfce7;
+  --color-noku-brand-border: #23c45c;
+  --color-noku-brand-deep: #15522c;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Status */
+  --color-noku-amber: #e5a000;
+  --color-noku-red: #d93036;
+  --color-noku-overdue-bg: #fef2f2;
+  --color-noku-overdue-text: #b91c1c;
+  --color-noku-overdue-border: #fecaca;
+  --color-noku-paid-bg: #f0fdf4;
+  --color-noku-paid-text: #15803d;
+  --color-noku-paid-border: #22c55e;
+  --color-noku-success: #16a34a;
+
+  /* Text */
+  --color-noku-heading: #1d1d16;
+  --color-noku-text-mid: #474739;
+  --color-noku-text-dim: #7c7c67;
+  --color-noku-text-subtle: #abab9c;
+  --color-noku-body: #555555;
+  --color-noku-secondary: #999999;
+
+  /* Backgrounds */
+  --color-noku-bg: #fbfbf9;
+  --color-noku-warm-hover: #f4f4f0;
+  --color-noku-card: #f5f5f5;
+  --color-noku-surface: #ffffff;
+
+  /* Borders */
+  --color-noku-rule: #e2e2e2;
+  --color-noku-border-light: #e8e8e3;
+  --color-noku-border-warm: #e8e3c5;
+  --color-noku-border-primary: #d4d4d4;
+  --color-noku-nav-border: #d8d8d0;
+
+  --radius-card: 12px;
+  --max-width-app: 430px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-noku-card);
+  min-height: 100vh;
+}
+
+button, a, [role="button"] {
+  cursor: pointer;
+}
+
+@utility bg-noku-warm-card {
+  background-color: rgba(232, 227, 197, 0.3);
+}
+
+@utility bg-noku-payment-item {
+  background-color: rgba(232, 227, 197, 0.08);
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
