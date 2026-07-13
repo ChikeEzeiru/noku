@@ -198,29 +198,29 @@ export default function FundScreen({ onNavigate, onSeeAll }: FundScreenProps) {
             <ArrowNarrowRightIcon />
           </button>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="bg-white border border-noku-border-light rounded-[8px] overflow-hidden">
           {expenditures.map((item, i) => (
-            <div
-              key={i}
-              className="bg-white border border-noku-border-light rounded-xl p-2 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-md border border-noku-border-primary bg-noku-bg flex items-center justify-center shadow-sm text-noku-text-dim shrink-0">
-                  {item.icon === "tool"
-                    ? <img src="/icons/RepairIcon.svg" alt="" className="w-4 h-4" />
-                    : <img src="/icons/ReceiptIcon.svg" alt="" className="w-4 h-4" />}
+            <div key={i}>
+              {i > 0 && <div className="h-px" style={{ backgroundColor: "#e8e8e3" }} />}
+              <div className="w-full p-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="shrink-0 w-8 h-8 rounded-[6px] relative overflow-hidden"
+                    style={{ border: "1px solid #d4d4d4", boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px rgba(0,0,0,0.05)" }}
+                  >
+                    <div className="absolute inset-0 bg-noku-bg rounded-[6px]" />
+                    {item.icon === "tool"
+                      ? <img src="/icons/RepairIcon.svg" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4" />
+                      : <img src="/icons/ReceiptIcon.svg" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4" />}
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-[10px] font-normal leading-4 text-noku-text-subtle">{item.vendor}</p>
+                    <p className="text-sm font-medium leading-5" style={{ color: "#474739" }}>{item.amount}</p>
+                    <p className="text-xs font-normal leading-[18px] text-noku-text-dim">{item.desc}</p>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <p className="text-[10px] text-noku-text-subtle">
-                    {item.vendor}
-                  </p>
-                  <p className="text-sm font-medium text-noku-text-mid">
-                    {item.amount}
-                  </p>
-                  <p className="text-xs text-noku-text-dim">{item.desc}</p>
-                </div>
+                <p className="text-xs font-normal leading-[18px] text-noku-text-dim shrink-0">{item.rate}</p>
               </div>
-              <p className="text-xs text-noku-text-dim shrink-0">{item.rate}</p>
             </div>
           ))}
         </div>

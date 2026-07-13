@@ -26,20 +26,24 @@ const expenditures: ExpenditureItem[] = [
 
 function ExpenditureRow({ item }: { item: ExpenditureItem }) {
   return (
-    <div className="bg-white border border-noku-border-light rounded-xl p-2 flex items-center justify-between">
+    <div className="w-full p-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-md border border-noku-border-primary bg-noku-bg flex items-center justify-center shadow-sm text-noku-text-dim shrink-0">
+        <div
+          className="shrink-0 w-8 h-8 rounded-[6px] relative overflow-hidden"
+          style={{ border: "1px solid #d4d4d4", boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px rgba(0,0,0,0.05)" }}
+        >
+          <div className="absolute inset-0 bg-noku-bg rounded-[6px]" />
           {item.icon === "tool"
-            ? <img src="/icons/RepairIcon.svg" alt="" className="w-4 h-4" />
-            : <img src="/icons/ReceiptIcon.svg" alt="" className="w-4 h-4" />}
+            ? <img src="/icons/RepairIcon.svg" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4" />
+            : <img src="/icons/ReceiptIcon.svg" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4" />}
         </div>
         <div className="flex flex-col gap-0.5">
-          <p className="text-[10px] text-noku-text-subtle">{item.vendor}</p>
-          <p className="text-sm font-medium text-noku-text-mid">{item.amount}</p>
-          <p className="text-xs text-noku-text-dim">{item.desc}</p>
+          <p className="text-[10px] font-normal leading-4 text-noku-text-subtle">{item.vendor}</p>
+          <p className="text-sm font-medium leading-5" style={{ color: "#474739" }}>{item.amount}</p>
+          <p className="text-xs font-normal leading-[18px] text-noku-text-dim">{item.desc}</p>
         </div>
       </div>
-      <p className="text-xs text-noku-text-dim shrink-0">{item.rate}</p>
+      <p className="text-xs font-normal leading-[18px] text-noku-text-dim shrink-0">{item.rate}</p>
     </div>
   );
 }
@@ -73,18 +77,24 @@ export default function FundExpenditureScreen({ onBack }: FundExpenditureScreenP
 
       {/* Grouped list */}
       <div className="px-6 mt-6 flex flex-col gap-6">
-        {months.map((month) => (
-          <div key={month} className="flex flex-col gap-3">
-            <p className="text-xs font-medium text-noku-text-subtle uppercase tracking-[0.06em]">
-              {month}
-            </p>
-            {expenditures
-              .filter((e) => e.month === month)
-              .map((item, i) => (
-                <ExpenditureRow key={i} item={item} />
-              ))}
-          </div>
-        ))}
+        {months.map((month) => {
+          const items = expenditures.filter((e) => e.month === month);
+          return (
+            <div key={month} className="flex flex-col gap-3">
+              <p className="text-xs font-medium text-noku-text-subtle uppercase tracking-[0.06em]">
+                {month}
+              </p>
+              <div className="bg-white border border-noku-border-light rounded-[8px] overflow-hidden">
+                {items.map((item, i) => (
+                  <div key={i}>
+                    {i > 0 && <div className="h-px" style={{ backgroundColor: "#e8e8e3" }} />}
+                    <ExpenditureRow item={item} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

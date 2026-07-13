@@ -135,6 +135,15 @@ function SearchIcon() {
   );
 }
 
+function SparkleIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M6 1.5 L6.8 4.8 L10 6 L6.8 7.2 L6 10.5 L5.2 7.2 L2 6 L5.2 4.8 Z" fill="#7c7c67"/>
+      <path d="M10 1 L10.4 2.6 L12 3 L10.4 3.4 L10 5 L9.6 3.4 L8 3 L9.6 2.6 Z" fill="#abab9c"/>
+    </svg>
+  );
+}
+
 const categoryStyles: Record<string, { bg: string; border: string; text: string }> = {
   purple: { bg: "#f9f5ff", border: "#e9d7fe", text: "#6941c6" },
   pink: { bg: "#fdf2f8", border: "#fbcfe8", text: "#be185d" },
@@ -151,9 +160,7 @@ export default function UpdatesScreen({ onNavigate, onSelectCard }: UpdatesScree
     <div className="bg-noku-bg min-h-screen pb-28 relative">
       {/* Header */}
       <div className="px-6 pt-6 flex items-center justify-between">
-        <p className="text-xs font-medium text-noku-text-dim uppercase tracking-[0.06em]">
-          Announcements &amp; Updates
-        </p>
+        <p className="text-base font-medium leading-6 text-noku-text-dim">Power Updates</p>
         <button className="p-1.5 text-noku-text-dim">
           <SearchIcon />
         </button>
@@ -163,55 +170,53 @@ export default function UpdatesScreen({ onNavigate, onSelectCard }: UpdatesScree
       <div className="px-6 mt-6 flex flex-col gap-2">
         {newsCards.map((card, i) => {
           const catStyle = categoryStyles[card.categoryColor];
-          const isFirstCard = i === 0;
           return (
             <button
               key={i}
               onClick={() => onSelectCard(card)}
-              className="rounded-xl overflow-hidden flex border w-full text-left"
+              className="rounded-[12px] overflow-hidden flex border w-full text-left"
               style={{
-                borderColor: isFirstCard ? "#4bdd7e" : "#e8e8e3",
-                backgroundColor: isFirstCard ? "#f0fdf4" : "white",
+                borderColor: card.isNew ? "#4bdd7e" : "#e8e8e3",
+                backgroundColor: card.isNew ? "#f0fdf4" : "white",
               }}
             >
               {/* Thumbnail */}
               <div className="w-[120px] shrink-0 self-stretch relative">
-                <img
-                  src={card.img}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+                <img src={card.img} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                {card.isNew && (
+                  <div
+                    className="absolute top-2 left-2 p-1 rounded-[6px] bg-white border border-[#d4d4d4]"
+                    style={{ boxShadow: "0px 1px 1px rgba(0,0,0,0.05)" }}
+                  >
+                    <SparkleIcon />
+                  </div>
+                )}
               </div>
               {/* Content */}
               <div className="flex-1 p-3 flex flex-col gap-2 min-w-0">
-                <div className="flex gap-2 items-start">
-                  <p
-                    className="flex-1 text-sm font-medium text-noku-text-mid leading-5 overflow-hidden"
-                    style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
-                  >
-                    {card.title}
-                  </p>
-                  {card.isNew && (
-                    <span className="text-[10px] font-semibold text-noku-green shrink-0">NEW*</span>
-                  )}
-                </div>
                 <p
-                  className="text-xs text-noku-text-mid leading-[18px] overflow-hidden"
-                  style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                  className={`text-sm leading-5 h-[40px] overflow-hidden text-ellipsis ${card.isNew ? "font-semibold" : "font-medium"}`}
+                  style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", color: "#474739" }}
+                >
+                  {card.title}
+                </p>
+                <p
+                  className={`text-xs leading-[18px] h-[36px] overflow-hidden text-ellipsis ${card.isNew ? "font-medium" : "font-normal"}`}
+                  style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", color: "#474739" }}
                 >
                   {card.excerpt}
                 </p>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between h-[22px]">
                   <div className="flex gap-1 items-center">
                     <span
-                      className="text-[10px] font-medium px-2 py-0.5 rounded-full border"
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full border leading-4"
                       style={{ backgroundColor: catStyle.bg, borderColor: catStyle.border, color: catStyle.text }}
                     >
                       {card.label}
                     </span>
                     <span
-                      className="text-[10px] font-medium px-1.5 py-0.5 rounded-md border border-noku-border-primary bg-white flex items-center gap-1"
-                      style={{ color: card.urgency === "Urgent" ? "#ca8a04" : "#404040" }}
+                      className="text-[10px] font-medium px-1.5 py-0.5 rounded-[6px] border border-[#d4d4d4] bg-white flex items-center gap-1 leading-4"
+                      style={{ color: card.urgency === "Urgent" ? "#ca8a04" : "#404040", boxShadow: "0px 1px 1px rgba(0,0,0,0.05)" }}
                     >
                       <span
                         className="w-2 h-2 rounded-full inline-block shrink-0"
@@ -220,7 +225,7 @@ export default function UpdatesScreen({ onNavigate, onSelectCard }: UpdatesScree
                       {card.urgency}
                     </span>
                   </div>
-                  <p className="text-[10px] text-black">{card.time}</p>
+                  <p className="text-[10px] font-normal leading-4 text-black">{card.time}</p>
                 </div>
               </div>
             </button>

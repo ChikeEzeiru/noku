@@ -4,11 +4,11 @@ import { useState } from "react";
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 import type { PaymentRecord } from "@/types/payment";
 
-// Generator house images (fresh Figma assets, per-state)
-const generatorImgOn       = "https://www.figma.com/api/mcp/asset/c7eac364-fd9e-4b70-9571-f328b2fa3460";
-const generatorImgOff      = "https://www.figma.com/api/mcp/asset/488340cf-1154-4afc-b603-a50d445334a6";
-const generatorImgRationed = "https://www.figma.com/api/mcp/asset/7023ef65-f673-4dd2-8f62-d9aac3c41002";
-const generatorImgRepairs  = "https://www.figma.com/api/mcp/asset/f2d33f1b-82ab-4081-920f-ea787b4792f5";
+// Generator house images — local public assets for instant switching
+const generatorImgOn       = "/Images/generator-on.png";
+const generatorImgOff      = "/Images/generator-off.png";
+const generatorImgRationed = "/Images/generator-rationed.png";
+const generatorImgRepairs  = "/Images/generator-repair.png";
 
 // Badge zap/zap-off icons (fresh, per-state colour)
 const zapIconOn       = "https://www.figma.com/api/mcp/asset/b9aa834f-59ff-4a28-8193-be1ace405316";
@@ -256,7 +256,7 @@ export default function HomeScreen({
         {/* Billing card */}
         <button
           onClick={() => onNavigate("payments")}
-          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-4 items-start text-left self-stretch"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col justify-between items-start text-left self-stretch"
         >
           {/* Top: period + detail */}
           <div className="flex flex-col gap-1 w-full">
@@ -286,7 +286,7 @@ export default function HomeScreen({
         {/* Fund health card */}
         <button
           onClick={() => onNavigate("fund")}
-          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-4 items-start text-left overflow-hidden self-stretch"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col justify-between items-start text-left overflow-hidden self-stretch"
         >
           {/* Top: label + detail */}
           <div className="flex flex-col gap-1 w-full">
@@ -298,8 +298,8 @@ export default function HomeScreen({
               28 of 30 generator days covered
             </p>
           </div>
-          {/* Bottom: progress + % */}
-          <div className="flex items-center gap-2 w-full">
+          {/* Bottom: progress + % — min-h matches the 30px line-height of the billing amount */}
+          <div className="flex items-center gap-2 w-full min-h-[30px]">
             <div className="flex-1 h-2 rounded-full relative" style={{ backgroundColor: "#e5e5e5" }}>
               <div className="absolute left-0 top-0 h-full rounded-full bg-noku-brand-mid" style={{ width: "90%" }} />
             </div>
