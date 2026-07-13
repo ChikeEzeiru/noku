@@ -4,17 +4,28 @@ import { useState } from "react";
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 import type { PaymentRecord } from "@/types/payment";
 
-const generatorImgOn       = "https://www.figma.com/api/mcp/asset/4bd1dd8d-543d-48e5-889b-fb433c91f875";
-const generatorImgOff      = "https://www.figma.com/api/mcp/asset/f0166a65-d510-4e8a-a2a0-b94469590acd";
-const generatorImgRationed = "https://www.figma.com/api/mcp/asset/47e72313-15a8-42e4-8234-146ec39886cc";
-const generatorImgRepairs  = "https://www.figma.com/api/mcp/asset/e977aa3a-7266-4070-a842-2e42ecdd93bc";
+// Generator house images (fresh Figma assets, per-state)
+const generatorImgOn       = "https://www.figma.com/api/mcp/asset/c7eac364-fd9e-4b70-9571-f328b2fa3460";
+const generatorImgOff      = "https://www.figma.com/api/mcp/asset/488340cf-1154-4afc-b603-a50d445334a6";
+const generatorImgRationed = "https://www.figma.com/api/mcp/asset/7023ef65-f673-4dd2-8f62-d9aac3c41002";
+const generatorImgRepairs  = "https://www.figma.com/api/mcp/asset/f2d33f1b-82ab-4081-920f-ea787b4792f5";
 
-const zapIconOn       = "https://www.figma.com/api/mcp/asset/099f517e-9df7-47d3-81c4-90f439617a1d";
-const zapIconOff      = "https://www.figma.com/api/mcp/asset/f11eb15d-a5dd-4c13-b319-bf0df9c129e8";
-const zapIconRationed = "https://www.figma.com/api/mcp/asset/439a6ee2-57a4-4019-aa6c-a1deaaf231d1";
-const zapIconRepairs  = "https://www.figma.com/api/mcp/asset/78971a47-b046-42f7-a02c-b899e45dc2af";
+// Badge zap/zap-off icons (fresh, per-state colour)
+const zapIconOn       = "https://www.figma.com/api/mcp/asset/b9aa834f-59ff-4a28-8193-be1ace405316";
+const zapIconOff      = "https://www.figma.com/api/mcp/asset/cdcc1dee-b533-4a8a-8076-c7e1081f4bd0";
+const zapIconRationed = "https://www.figma.com/api/mcp/asset/8ad33514-ede5-4e28-beb9-a1a301dd5d5f";
+const zapIconRepairs  = "https://www.figma.com/api/mcp/asset/841fb066-9469-4558-8530-3d42bf6b7816";
 
-const myUnitIcon = "https://www.figma.com/api/mcp/asset/ceac2839-e1e3-41be-9503-cd444645f76b";
+// Quick action icons (fresh)
+const reportIssueIcon = "https://www.figma.com/api/mcp/asset/80391289-f49a-424c-9a49-0ba91b07f905";
+const payNowIcon      = "https://www.figma.com/api/mcp/asset/bbe12044-2266-4f29-bd38-2f371532ed83";
+const myUnitIcon      = "https://www.figma.com/api/mcp/asset/0294f0c6-8fc6-4b67-b01a-8b0c344c12a6";
+const receiptIcon     = "https://www.figma.com/api/mcp/asset/a08c2d0f-7a55-4ee2-a68e-d99cca9ad852";
+
+// Utility icons (fresh)
+const arrowUpRightIcon    = "https://www.figma.com/api/mcp/asset/3742a249-965e-4381-936d-6625cafb9d2d";
+const arrowNarrowRightIcon = "https://www.figma.com/api/mcp/asset/d57f13fa-f8c3-4812-9446-5d756ff327b6";
+const recentPaymentsIcon  = "https://www.figma.com/api/mcp/asset/bd1cb446-8b3d-4d69-96b7-48968e383694";
 
 type GeneratorStatus = "on" | "off" | "rationed" | "repairs";
 
@@ -27,6 +38,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
   badgeLabel: string;
   badgeIconSrc: string;
   imgSrc: string;
+  imgOpacity: number;
+  imgStyle: "crop" | "object-bottom";
   title: string;
   titleColor: string;
   subtitle: string;
@@ -40,19 +53,23 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeLabel: "Power: Generator",
     badgeIconSrc: zapIconOn,
     imgSrc: generatorImgOn,
-    title: "7:00pm – 2:00am",
+    imgOpacity: 1,
+    imgStyle: "crop",
+    title: "7:00pm - 2:00am",
     titleColor: "#15522c",
     subtitle: "turns off in 5 hours",
     subtitleColor: "#17a248",
     hasAlert: false,
   },
   off: {
-    badgeBg: "#f4f4f0",
+    badgeBg: "#ffffff",
     badgeBorder: "#abab9c",
     badgeTextColor: "#474739",
     badgeLabel: "Power: Generator",
     badgeIconSrc: zapIconOff,
     imgSrc: generatorImgOff,
+    imgOpacity: 1,
+    imgStyle: "object-bottom",
     title: "Generator Off",
     titleColor: "#474739",
     subtitle: "Resumes 7pm",
@@ -60,25 +77,29 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     hasAlert: true,
   },
   rationed: {
-    badgeBg: "#fffbeb",
-    badgeBorder: "#fde68a",
+    badgeBg: "#ffffff",
+    badgeBorder: "#ca8a04",
     badgeTextColor: "#ca8a04",
     badgeLabel: "Power: Generator (rationed)",
     badgeIconSrc: zapIconRationed,
     imgSrc: generatorImgRationed,
-    title: "7:00pm – 11:00pm",
+    imgOpacity: 1,
+    imgStyle: "object-bottom",
+    title: "7:00pm - 11:00pm",
     titleColor: "#a16207",
     subtitle: "Turns off in 3 hours",
     subtitleColor: "#ca8a04",
     hasAlert: true,
   },
   repairs: {
-    badgeBg: "#fef2f2",
-    badgeBorder: "#fecaca",
+    badgeBg: "#ffffff",
+    badgeBorder: "#dc2626",
     badgeTextColor: "#b91c1c",
     badgeLabel: "Generator unavailable",
     badgeIconSrc: zapIconRepairs,
     imgSrc: generatorImgRepairs,
+    imgOpacity: 0.75,
+    imgStyle: "object-bottom",
     title: "Repairs ongoing",
     titleColor: "#b91c1c",
     subtitle: "The committee is working on this",
@@ -91,31 +112,6 @@ function CycleIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
       <path d="M1 6a5 5 0 0 1 8.5-3.5L11 1M11 1v3H8M11 6a5 5 0 0 1-8.5 3.5L1 11M1 11V8h3"/>
-    </svg>
-  );
-}
-
-function BellIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 2a6 6 0 0 0-6 6v2.5l-1.5 2.5h15l-1.5-2.5V8a6 6 0 0 0-6-6Z"/>
-      <path d="M8 15a2 2 0 0 0 4 0"/>
-    </svg>
-  );
-}
-
-function ArrowUpRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 12L12 4M12 4H6M12 4v6"/>
-    </svg>
-  );
-}
-
-function ArrowNarrowRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3.333 8h9.334M9.333 5.333 12 8l-2.667 2.667"/>
     </svg>
   );
 }
@@ -161,162 +157,192 @@ export default function HomeScreen({
         { amount: "₦70,000", date: "Paid · Apr 3", period: "April 2026", datePaid: "Apr 3, 2026",  channel: "External" },
       ]
     : [
-        { amount: "₦95,000", date: "Paid · May 1",      period: "May 2026",   datePaid: "May 1, 2026",  channel: "In app" },
-        { amount: "₦70,000", date: "Paid · Apr 3",      period: "April 2026", datePaid: "Apr 3, 2026",  channel: "External" },
-        { amount: "₦70,000", date: "Paid · Mar 3 2026", period: "March 2026", datePaid: "Mar 3, 2026",  channel: "In app" },
+        { amount: "₦95,000", date: "Paid · May 1",  period: "May 2026",   datePaid: "May 1, 2026", channel: "In app" },
+        { amount: "₦70,000", date: "Paid · Apr 3",  period: "April 2026", datePaid: "Apr 3, 2026", channel: "External" },
+        { amount: "₦70,000", date: "Paid · Mar 3",  period: "March 2026", datePaid: "Mar 3, 2026", channel: "In app" },
       ];
 
   return (
     <div className="bg-noku-bg min-h-screen pb-32 relative">
 
       {/* Header */}
-      <div className="flex items-start justify-between px-6 pt-6">
-        <div>
-          <p className="text-base font-medium">
+      <div className="flex items-start justify-between px-5 pt-3">
+        <div className="flex flex-col gap-0.5">
+          <p className="text-base font-medium leading-6">
             <span style={{ color: "#474739" }}>Good Evening, </span>
             <span style={{ color: "#16803c" }}>Ciroma</span>
           </p>
-          <p className="text-[10px] text-noku-text-dim mt-0.5">Building B, Unit 4</p>
+          <p className="text-[10px] leading-4 text-noku-text-dim">Building B, Unit 4</p>
         </div>
         <button
           onClick={onNotifications}
-          className="relative w-9 h-9 rounded-full flex items-center justify-center text-noku-text-mid flex-shrink-0"
+          className="relative flex items-center justify-center p-2 rounded-full flex-shrink-0"
           style={{ backgroundColor: "#ffffff", border: "1px solid #f4f4f0" }}
         >
-          <BellIcon />
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#474739" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10 2a6 6 0 0 0-6 6v2.5l-1.5 2.5h15l-1.5-2.5V8a6 6 0 0 0-6-6Z"/>
+            <path d="M8 15a2 2 0 0 0 4 0"/>
+          </svg>
           {cfg.hasAlert && (
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border border-white" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
           )}
         </button>
       </div>
 
-      {/* Generator status — transparent, no card */}
-      <div className="mt-5 relative min-h-[120px] overflow-hidden">
-        <div className="pl-6 pr-4 flex flex-col gap-2 z-10 relative max-w-[55%]">
-          {/* Badge */}
-          <div
-            className="flex items-center gap-1 self-start rounded-md px-1.5 py-0.5"
-            style={{ backgroundColor: cfg.badgeBg, border: `1px solid ${cfg.badgeBorder}` }}
-          >
-            <img src={cfg.badgeIconSrc} alt="" className="w-3.5 h-3.5" />
-            <span className="text-[10px]" style={{ color: cfg.badgeTextColor }}>{cfg.badgeLabel}</span>
+      {/* Generator section — no card bg, image flush right */}
+      <div className="px-5 relative mt-5">
+        <div className="min-h-[120px] py-3 overflow-hidden">
+          <div className="flex flex-col gap-2 items-start">
+            {/* Badge */}
+            <div
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded-[6px] drop-shadow-sm"
+              style={{ backgroundColor: cfg.badgeBg, border: `1px solid ${cfg.badgeBorder}` }}
+            >
+              <img src={cfg.badgeIconSrc} alt="" className="w-3.5 h-3.5" />
+              <span className="text-[10px] leading-4 font-normal" style={{ color: cfg.badgeTextColor }}>
+                {cfg.badgeLabel}
+              </span>
+            </div>
+            {/* Title */}
+            <p className="text-lg font-semibold leading-7" style={{ color: cfg.titleColor }}>
+              {cfg.title}
+            </p>
+            {/* Subtitle */}
+            <p className="text-[10px] leading-4 font-normal" style={{ color: cfg.subtitleColor }}>
+              {cfg.subtitle}
+            </p>
           </div>
-          {/* Title */}
-          <p className="text-lg font-semibold leading-snug" style={{ color: cfg.titleColor }}>
-            {cfg.title}
-          </p>
-          {/* Subtitle */}
-          <p className="text-[10px]" style={{ color: cfg.subtitleColor }}>{cfg.subtitle}</p>
         </div>
 
-        {/* House + generator image */}
+        {/* House+generator image, absolutely right-aligned, horizontally flipped */}
         <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"
+          className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center"
           style={{ width: 207, height: 134 }}
         >
-          <img
-            src={cfg.imgSrc}
-            alt=""
-            className="w-full h-full object-contain"
-            style={{ transform: "scaleX(-1)" }}
-          />
+          <div style={{ transform: "scaleX(-1)", opacity: cfg.imgOpacity, width: 207, height: 134, position: "relative" }}>
+            {cfg.imgStyle === "crop" ? (
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img
+                  src={cfg.imgSrc}
+                  alt=""
+                  className="absolute max-w-none"
+                  style={{ height: "145.32%", left: "-50.54%", top: "-24.91%", width: "172.04%" }}
+                />
+              </div>
+            ) : (
+              <img
+                src={cfg.imgSrc}
+                alt=""
+                className="absolute inset-0 max-w-none size-full pointer-events-none"
+                style={{ objectFit: "cover", objectPosition: "bottom" }}
+              />
+            )}
+          </div>
         </div>
 
         {/* Demo cycle button */}
         <button
           onClick={cycleStatus}
           title="Cycle generator state (demo)"
-          className="absolute bottom-1 right-2 z-10 flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-black/10 rounded-md px-1.5 py-1 text-[10px] text-noku-text-dim shadow-sm"
+          className="absolute bottom-2 right-2 z-10 flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-black/10 rounded-md px-1.5 py-1 text-[10px] text-noku-text-dim shadow-sm"
         >
           <CycleIcon />
           cycle
         </button>
       </div>
 
-      {/* Stats cards */}
-      <div className="px-6 mt-5 flex gap-3">
+      {/* Stats cards — period/detail on top, amount/badge on bottom */}
+      <div className="px-5 mt-6 flex gap-2 items-start">
         {/* Billing card */}
         <button
           onClick={() => onNavigate("payments")}
-          className="bg-white border border-noku-border-light rounded-xl p-3 flex-1 flex flex-col gap-3 text-left"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-4 items-start text-left self-stretch"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-noku-text-dim">JUN 2026</span>
-            <span className="text-noku-text-dim"><ArrowUpRightIcon /></span>
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-lg font-semibold text-noku-text-mid">₦95,000</span>
-              {isPaid ? (
-                <span className="text-[10px] font-medium text-noku-paid-text bg-noku-paid-bg border border-noku-paid-border rounded-md px-1.5 py-0.5">
-                  Paid
-                </span>
-              ) : (
-                <span className="text-[10px] font-medium text-noku-overdue-text bg-noku-overdue-bg border border-noku-overdue-border rounded-md px-1.5 py-0.5">
-                  Overdue
-                </span>
-              )}
+          {/* Top: period + detail */}
+          <div className="flex flex-col gap-1 w-full">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-xs font-medium leading-[18px]" style={{ color: "#474739" }}>JUN 2026</span>
+              <img src={arrowUpRightIcon} alt="" className="w-4 h-4" />
             </div>
-            <p className="text-[10px] text-noku-text-dim">5 occupants · 3 bed · 4 AC</p>
+            <p className="text-[10px] leading-4 font-normal text-noku-text-dim">
+              5 occupants · 3 bed · 4 AC
+            </p>
+          </div>
+          {/* Bottom: amount + badge */}
+          <div className="flex items-center gap-2">
+            <span className="text-[20px] font-medium leading-[30px]" style={{ color: "#474739" }}>₦95,000</span>
+            {isPaid ? (
+              <span className="text-[10px] font-medium leading-4 text-noku-paid-text bg-noku-paid-bg border border-noku-paid-border rounded-[6px] px-1.5 py-0.5">
+                Paid
+              </span>
+            ) : (
+              <span className="text-[10px] font-medium leading-4 text-noku-overdue-text bg-noku-overdue-bg border border-noku-overdue-border rounded-[6px] px-1.5 py-0.5">
+                Overdue
+              </span>
+            )}
           </div>
         </button>
 
         {/* Fund health card */}
         <button
           onClick={() => onNavigate("fund")}
-          className="bg-white border border-noku-border-light rounded-xl p-3 flex-1 flex flex-col gap-3 overflow-hidden text-left"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-4 items-start text-left overflow-hidden self-stretch"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-noku-text-dim">FUND HEALTH</span>
-            <span className="text-noku-text-dim"><ArrowUpRightIcon /></span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: "#e8e8e3" }}>
-                <div className="h-full w-[90%] bg-noku-brand-mid rounded-full" />
-              </div>
-              <span className="text-sm font-semibold text-noku-text-mid">90%</span>
+          {/* Top: label + detail */}
+          <div className="flex flex-col gap-1 w-full">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-xs font-medium leading-[18px]" style={{ color: "#474739" }}>FUND HEALTH</span>
+              <img src={arrowUpRightIcon} alt="" className="w-4 h-4" />
             </div>
-            <p className="text-[10px] text-noku-text-dim">28 of 30 days covered</p>
+            <p className="text-[10px] leading-4 font-normal text-noku-text-dim">
+              28 of 30 generator days covered
+            </p>
+          </div>
+          {/* Bottom: progress + % */}
+          <div className="flex items-center gap-2 w-full">
+            <div className="flex-1 h-2 rounded-full relative" style={{ backgroundColor: "#e5e5e5" }}>
+              <div className="absolute left-0 top-0 h-full rounded-full bg-noku-brand-mid" style={{ width: "90%" }} />
+            </div>
+            <span className="text-sm font-medium leading-5" style={{ color: "#474739" }}>90%</span>
           </div>
         </button>
       </div>
 
       {/* Quick actions */}
-      <div className="px-6 mt-6">
-        <p className="text-sm text-noku-text-dim mb-3">Quick actions</p>
+      <div className="px-5 mt-6 flex flex-col gap-4">
+        <p className="text-sm font-normal leading-5" style={{ color: "#474739" }}>Quick actions</p>
         <div className="flex gap-2">
           <button
             onClick={onReportIssue}
-            className="flex-1 h-16 bg-white border border-noku-border-light rounded-lg flex flex-col items-center justify-center gap-1 text-noku-text-mid"
+            className="flex-1 h-16 bg-white border border-noku-border-light rounded-[8px] flex flex-col items-center justify-center gap-1 overflow-hidden p-2"
           >
-            <img src="/icons/ReportIssueIcon.svg" alt="" className="w-5 h-5" />
-            <span className="text-xs">Report Issue</span>
+            <img src={reportIssueIcon} alt="" className="w-5 h-5" />
+            <span className="text-xs font-normal leading-[18px]" style={{ color: "#474739" }}>Report Issue</span>
           </button>
 
           {isPaid ? (
             <button
               onClick={onViewReceipt}
-              className="flex-1 h-16 bg-white border border-noku-border-light rounded-lg flex flex-col items-center justify-center gap-1 text-noku-text-mid"
+              className="flex-1 h-16 bg-white border border-noku-border-light rounded-[8px] flex flex-col items-center justify-center gap-1 overflow-hidden p-2"
             >
-              <img src="/icons/ReceiptnocheckIcon.svg" alt="" className="w-5 h-5" />
-              <span className="text-xs">View receipt</span>
+              <img src={receiptIcon} alt="" className="w-5 h-5" />
+              <span className="text-xs font-normal leading-[18px]" style={{ color: "#474739" }}>View receipt</span>
             </button>
           ) : (
             <>
               <button
                 onClick={onPayNow}
-                className="flex-1 h-16 bg-white border border-noku-border-light rounded-lg flex flex-col items-center justify-center gap-1 text-noku-text-mid"
+                className="flex-1 h-16 bg-white border border-noku-border-light rounded-[8px] flex flex-col items-center justify-center gap-1 overflow-hidden p-2"
               >
-                <img src="/icons/PayNowIcon.svg" alt="" className="w-5 h-5" />
-                <span className="text-xs">Pay Now</span>
+                <img src={payNowIcon} alt="" className="w-5 h-5" />
+                <span className="text-xs font-normal leading-[18px]" style={{ color: "#474739" }}>Pay Now</span>
               </button>
               <button
                 onClick={() => onNavigate("profile")}
-                className="flex-1 h-16 bg-white border border-noku-border-light rounded-lg flex flex-col items-center justify-center gap-1 text-noku-text-mid"
+                className="flex-1 h-16 bg-white border border-noku-border-light rounded-[8px] flex flex-col items-center justify-center gap-1 overflow-hidden p-2"
               >
                 <img src={myUnitIcon} alt="" className="w-5 h-5" />
-                <span className="text-xs">My Unit</span>
+                <span className="text-xs font-normal leading-[18px]" style={{ color: "#474739" }}>My Unit</span>
               </button>
             </>
           )}
@@ -324,33 +350,43 @@ export default function HomeScreen({
       </div>
 
       {/* Recent payments */}
-      <div className="px-6 mt-6">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm text-noku-text-dim">Recent payments</p>
-          <button onClick={onSeeAll} className="flex items-center gap-0.5 text-noku-green text-sm font-medium">
+      <div className="px-5 mt-6 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-normal leading-5" style={{ color: "#474739" }}>Recent payments</p>
+          <button onClick={onSeeAll} className="flex items-center gap-1 text-noku-green text-sm font-medium leading-5">
             See All
-            <ArrowNarrowRightIcon />
+            <img src={arrowNarrowRightIcon} alt="" className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="bg-white border border-noku-border-light rounded-lg overflow-hidden">
+        <div className="bg-white border border-noku-border-light rounded-[8px] overflow-hidden">
           {recentPayments.map((p, i) => (
             <div key={i}>
-              {i > 0 && <div className="h-px mx-4" style={{ backgroundColor: "#e8e8e3" }} />}
+              {i > 0 && (
+                <div className="h-px" style={{ backgroundColor: "#e8e8e3" }} />
+              )}
               <button
                 onClick={() => onViewPaymentReceipt(p)}
-                className="w-full px-4 py-3 flex items-center justify-between text-left"
+                className="w-full p-3 flex items-center justify-between text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md border border-noku-border-light bg-noku-bg flex items-center justify-center shadow-sm shrink-0">
-                    <img src="/icons/RecentPaymentsIcon.svg" alt="" className="w-4 h-4" />
+                  {/* Icon cell — skeuomorphic style from Figma */}
+                  <div
+                    className="shrink-0 w-8 h-8 rounded-[6px] relative overflow-hidden"
+                    style={{
+                      border: "1px solid #d4d4d4",
+                      boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px rgba(0,0,0,0.05)",
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-noku-bg rounded-[6px]" />
+                    <img src={recentPaymentsIcon} alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-noku-text-mid">{p.amount}</p>
-                    <p className="text-xs text-noku-text-dim">{p.date}</p>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-sm font-medium leading-5" style={{ color: "#474739" }}>{p.amount}</p>
+                    <p className="text-xs font-normal leading-[18px] text-noku-text-dim">{p.date}</p>
                   </div>
                 </div>
-                <p className="text-xs text-noku-text-dim">{p.channel}</p>
+                <p className="text-xs font-normal leading-[18px] text-noku-text-dim">{p.channel}</p>
               </button>
             </div>
           ))}
