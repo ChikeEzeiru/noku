@@ -2,7 +2,7 @@
 
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 
-const houseImg = "https://www.figma.com/api/mcp/asset/1a9fad1b-09dc-4236-b6c3-4d8d3187bf46";
+const houseImg = "/images/profile-house.jpg";
 
 function ChevronRightIcon() {
   return (

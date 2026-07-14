@@ -3,7 +3,7 @@
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 import type { PaymentRecord } from "@/types/payment";
 
-const visaImg = "https://www.figma.com/api/mcp/asset/9b442311-c3de-4153-9268-6b1d65ea5df7";
+const visaImg = "/images/Payment-method-icon.svg";
 
 function ArrowRightIcon() {
   return (

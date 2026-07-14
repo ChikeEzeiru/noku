@@ -1,7 +1,6 @@
 "use client";
 
-const visaImg =
-  "https://www.figma.com/api/mcp/asset/ef00d06b-9f2e-466a-9516-9ff1861cf0f3";
+const visaImg = "/images/Payment-method-icon.svg";
 
 
 type PaymentReviewProps = {

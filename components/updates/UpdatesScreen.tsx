@@ -5,7 +5,7 @@ import type { UpdateItem } from "@/types/update";
 
 const newsCards: UpdateItem[] = [
   {
-    img: "https://www.figma.com/api/mcp/asset/3779446e-cbbc-4fe0-9059-03bb6b5b587b",
+    img: "/images/update-card-1.jpg",
     title: "Exciting Update: New Renewable Energy System Launched for Mini Estate",
     excerpt: "The mini estate has successfully implemented a new power generation system using solar panels and wind turbines, promising lower bills and a greener environment for all residents.",
     body: [
@@ -23,7 +23,7 @@ const newsCards: UpdateItem[] = [
     time: "1 day ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/8616f471-1407-447c-a450-dc0ef5d4fd64",
+    img: "/images/update-card-2.jpg",
     title: "Electricity Committee Update: New Solar Initiative Announced",
     excerpt: "The estate's electricity committee has approved a new solar panel programme. Subsidised installations will be available to all residents starting next quarter.",
     body: [
@@ -40,7 +40,7 @@ const newsCards: UpdateItem[] = [
     time: "2 days ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/bf231e2a-9de2-43b1-9486-f57c7d6168d2",
+    img: "/images/update-card-3.jpg",
     title: "Power Supply Enhancement: Upcoming Maintenance Schedule",
     excerpt: "Maintenance work on the estate's power distribution units is scheduled for this weekend. Expect brief outages between 8am–12pm on Saturday.",
     body: [
@@ -57,7 +57,7 @@ const newsCards: UpdateItem[] = [
     time: "3 days ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/eb7bf5f7-dbb3-424e-83e7-4e326829bb9f",
+    img: "/images/update-card-4.jpg",
     title: "Community Alert: Voltage Stabilization Project Underway",
     excerpt: "Engineers are actively addressing voltage irregularities reported across several units. Stabilizers are being fitted at the main junction box — work is expected to last 3–5 days.",
     body: [
@@ -74,7 +74,7 @@ const newsCards: UpdateItem[] = [
     time: "4 days ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/f81365f9-9dde-4131-b208-b11c008a2422",
+    img: "/images/update-card-5.jpg",
     title: "Important Notice: Temporary Power Outage for Critical Upgrades",
     excerpt: "A planned outage is scheduled for next Thursday, 10am–4pm, to complete critical infrastructure upgrades. Residents are advised to charge devices and plan accordingly.",
     body: [
@@ -91,7 +91,7 @@ const newsCards: UpdateItem[] = [
     time: "5 days ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/eee3e3c0-3bc4-4f0c-bbc6-68312756010c",
+    img: "/images/update-card-6.jpg",
     title: "Announcement: New Energy Efficiency Programs Now Available",
     excerpt: "Residents can now sign up for free energy audits, subsidised LED lighting, and smart plug kits — all part of the estate's new efficiency drive to cut communal power costs.",
     body: [
@@ -108,7 +108,7 @@ const newsCards: UpdateItem[] = [
     time: "1 week ago",
   },
   {
-    img: "https://www.figma.com/api/mcp/asset/f81365f9-9dde-4131-b208-b11c008a2422",
+    img: "/images/update-card-5.jpg",
     title: "Update: Smart Meter Installation Begins Next Week",
     excerpt: "The estate-wide smart meter rollout begins Monday. Technicians will visit units floor-by-floor — expect a 20–30 minute appointment per apartment. Check your notice board for your slot.",
     body: [

@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 
-const visaLogoOnCard = "https://www.figma.com/api/mcp/asset/4e80cc67-57da-443d-a0e2-e5a3d30cdf9e";
-const paypassIcon = "https://www.figma.com/api/mcp/asset/7af69850-9fbc-4aa7-909b-9223f7e02882";
+const visaLogoOnCard = "/images/Payment-method-icon.svg";
+
+function PaypassIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 6.5 a10 10 0 0 1 0 15" stroke="#16803c" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+      <path d="M14 9.5 a7 7 0 0 1 0 9" stroke="#16803c" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+      <path d="M14 12.5 a4 4 0 0 1 0 3" stroke="#16803c" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+    </svg>
+  );
+}
 
 
 function ArrowRightIcon() {
@@ -81,7 +90,7 @@ export default function AddCard({ onBack, onConfirm }: AddCardProps) {
             {/* Top row: bank name + paypass */}
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-noku-brand-deep tracking-wide">My Bank</p>
-              <img src={paypassIcon} alt="" className="h-7 opacity-80" />
+              <PaypassIcon />
             </div>
 
             {/* Card number */}
@@ -101,7 +110,7 @@ export default function AddCard({ onBack, onConfirm }: AddCardProps) {
                 <p className="text-[9px] text-noku-brand-mid uppercase tracking-widest">Expires</p>
                 <p className="text-xs font-semibold text-noku-brand-deep">{displayExpiry}</p>
               </div>
-              <img src={visaLogoOnCard} alt="Visa" className="h-8" />
+              <img src={visaLogoOnCard} alt="Visa" className="h-8 object-contain" />
             </div>
           </div>
         </div>

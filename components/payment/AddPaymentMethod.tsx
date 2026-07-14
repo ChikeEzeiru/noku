@@ -2,9 +2,26 @@
 
 import { useState } from "react";
 
-const visaCardIcon = "https://www.figma.com/api/mcp/asset/baa3fd31-1ce6-4ba8-94c7-d187a4d446d8";
-const creditCardPlusIcon = "https://www.figma.com/api/mcp/asset/9cbd675c-f0b3-4990-84a7-226780d7e260";
-const buildingIcon = "https://www.figma.com/api/mcp/asset/c827b7f9-847f-4a0d-93b0-8e351c7ca64b";
+const visaCardIcon = "/images/Payment-method-icon.svg";
+
+function CreditCardPlusIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1.667" y="4.167" width="16.667" height="11.667" rx="2"/>
+      <path d="M1.667 8.333h16.667"/>
+      <path d="M6.667 12.5h2.5M14.167 12.5v-2.5M12.917 11.25h2.5"/>
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2.5 17.5h15M4.167 17.5V7.5l5.833-5 5.833 5v10"/>
+      <path d="M7.5 17.5v-5h5v5"/>
+    </svg>
+  );
+}
 
 
 function ArrowRightIcon() {
@@ -119,7 +136,7 @@ export default function AddPaymentMethod({ onBack, onAddCard, onBankTransfer, on
                 className="w-10 h-10 rounded border border-noku-border-primary bg-white flex items-center justify-center shrink-0"
                 style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
               >
-                <img src={creditCardPlusIcon} alt="" className="w-5 h-5" />
+                <CreditCardPlusIcon />
               </div>
               <div className="flex flex-col leading-5">
                 <p className="text-sm font-medium text-[#404040]">Add a Card</p>
@@ -152,7 +169,7 @@ export default function AddPaymentMethod({ onBack, onAddCard, onBankTransfer, on
                 className="w-10 h-10 rounded border border-noku-border-primary bg-white flex items-center justify-center shrink-0"
                 style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
               >
-                <img src={buildingIcon} alt="" className="w-5 h-5" />
+                <BuildingIcon />
               </div>
               <div className="flex flex-col leading-5">
                 <p className="text-sm font-medium text-[#404040]">Bank Transfer</p>

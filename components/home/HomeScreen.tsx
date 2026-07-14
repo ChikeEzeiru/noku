@@ -10,22 +10,32 @@ const generatorImgOff      = "/Images/generator-off.png";
 const generatorImgRationed = "/Images/generator-rationed.png";
 const generatorImgRepairs  = "/Images/generator-repair.png";
 
-// Badge zap/zap-off icons (fresh, per-state colour)
-const zapIconOn       = "https://www.figma.com/api/mcp/asset/b9aa834f-59ff-4a28-8193-be1ace405316";
-const zapIconOff      = "https://www.figma.com/api/mcp/asset/cdcc1dee-b533-4a8a-8076-c7e1081f4bd0";
-const zapIconRationed = "https://www.figma.com/api/mcp/asset/8ad33514-ede5-4e28-beb9-a1a301dd5d5f";
-const zapIconRepairs  = "https://www.figma.com/api/mcp/asset/841fb066-9469-4558-8530-3d42bf6b7816";
+// Quick action icons — local public assets
+const reportIssueIcon = "/icons/ReportIssueIcon.svg";
+const payNowIcon      = "/icons/PayNowIcon.svg";
+const myUnitIcon      = "/icons/ResidentDetailsIcon.svg";
+const receiptIcon     = "/icons/ReceiptIcon.svg";
+const arrowUpRightIcon     = "/icons/arrow-up-rightIcon.svg";
+const recentPaymentsIcon   = "/icons/RecentPaymentsIcon.svg";
 
-// Quick action icons (fresh)
-const reportIssueIcon = "https://www.figma.com/api/mcp/asset/80391289-f49a-424c-9a49-0ba91b07f905";
-const payNowIcon      = "https://www.figma.com/api/mcp/asset/bbe12044-2266-4f29-bd38-2f371532ed83";
-const myUnitIcon      = "https://www.figma.com/api/mcp/asset/0294f0c6-8fc6-4b67-b01a-8b0c344c12a6";
-const receiptIcon     = "https://www.figma.com/api/mcp/asset/a08c2d0f-7a55-4ee2-a68e-d99cca9ad852";
+function ZapBadgeIcon({ color, strokeColor }: { color: string; strokeColor: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.6">
+        <path d="M7.10352 0.766113C7.28114 0.55325 7.57768 0.482911 7.83203 0.593262C8.08644 0.703699 8.23738 0.968455 8.20312 1.24365L7.70801 5.2085H11.2539C11.4003 5.2085 11.5534 5.20798 11.6777 5.21924C11.7892 5.22934 12.0104 5.25604 12.2031 5.41162C12.4221 5.58859 12.548 5.85664 12.5439 6.13818C12.5402 6.38616 12.4191 6.57439 12.3555 6.6665C12.2845 6.76915 12.1864 6.88621 12.0928 6.99854L6.89648 13.2329C6.71892 13.446 6.42243 13.5171 6.16797 13.4067C5.91346 13.2963 5.76246 13.0307 5.79688 12.7554L6.29199 8.7915H2.74609C2.59972 8.7915 2.44662 8.79202 2.32227 8.78076C2.21073 8.77066 1.98968 8.74321 1.79688 8.5874C1.57775 8.41032 1.45181 8.14254 1.45605 7.86084L1.46289 7.771C1.48941 7.56771 1.58886 7.4141 1.64453 7.3335C1.71553 7.2307 1.81347 7.113 1.90723 7.00049L7.10352 0.766113Z"
+          fill={color} stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+      </g>
+    </svg>
+  );
+}
 
-// Utility icons (fresh)
-const arrowUpRightIcon    = "https://www.figma.com/api/mcp/asset/3742a249-965e-4381-936d-6625cafb9d2d";
-const arrowNarrowRightIcon = "https://www.figma.com/api/mcp/asset/d57f13fa-f8c3-4812-9446-5d756ff327b6";
-const recentPaymentsIcon  = "https://www.figma.com/api/mcp/asset/bd1cb446-8b3d-4d69-96b7-48968e383694";
+function ArrowNarrowRightIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2.917 7h8.166M7.583 4.667 9.917 7l-2.334 2.333" />
+    </svg>
+  );
+}
 
 type GeneratorStatus = "on" | "off" | "rationed" | "repairs";
 
@@ -36,7 +46,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
   badgeBorder: string;
   badgeTextColor: string;
   badgeLabel: string;
-  badgeIconSrc: string;
+  zapColor: string;
+  zapStroke: string;
   imgSrc: string;
   title: string;
   titleColor: string;
@@ -49,7 +60,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeBorder: "#87eeab",
     badgeTextColor: "#16803c",
     badgeLabel: "Power: Generator",
-    badgeIconSrc: zapIconOn,
+    zapColor: "#17a248",
+    zapStroke: "#bbf7cf",
     imgSrc: generatorImgOn,
     title: "7:00pm - 2:00am",
     titleColor: "#15522c",
@@ -62,7 +74,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeBorder: "#abab9c",
     badgeTextColor: "#474739",
     badgeLabel: "Power: Generator",
-    badgeIconSrc: zapIconOff,
+    zapColor: "#474739",
+    zapStroke: "#abab9c",
     imgSrc: generatorImgOff,
     title: "Generator Off",
     titleColor: "#474739",
@@ -75,7 +88,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeBorder: "#ca8a04",
     badgeTextColor: "#ca8a04",
     badgeLabel: "Power: Generator (rationed)",
-    badgeIconSrc: zapIconRationed,
+    zapColor: "#ca8a04",
+    zapStroke: "#fef08a",
     imgSrc: generatorImgRationed,
     title: "7:00pm - 11:00pm",
     titleColor: "#a16207",
@@ -88,7 +102,8 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeBorder: "#dc2626",
     badgeTextColor: "#b91c1c",
     badgeLabel: "Generator unavailable",
-    badgeIconSrc: zapIconRepairs,
+    zapColor: "#b91c1c",
+    zapStroke: "#fecaca",
     imgSrc: generatorImgRepairs,
     title: "Repairs ongoing",
     titleColor: "#b91c1c",
@@ -190,7 +205,7 @@ export default function HomeScreen({
               className="flex items-center gap-1 px-1.5 py-0.5 rounded-[6px] drop-shadow-sm"
               style={{ backgroundColor: cfg.badgeBg, border: `1px solid ${cfg.badgeBorder}` }}
             >
-              <img src={cfg.badgeIconSrc} alt="" className="w-3.5 h-3.5" />
+              <ZapBadgeIcon color={cfg.zapColor} strokeColor={cfg.zapStroke} />
               <span className="text-[10px] leading-4 font-normal" style={{ color: cfg.badgeTextColor }}>
                 {cfg.badgeLabel}
               </span>
@@ -335,7 +350,7 @@ export default function HomeScreen({
           <p className="text-sm font-normal leading-5" style={{ color: "#474739" }}>Recent payments</p>
           <button onClick={onSeeAll} className="flex items-center gap-1 text-noku-green text-sm font-medium leading-5">
             See All
-            <img src={arrowNarrowRightIcon} alt="" className="w-4 h-4" />
+            <ArrowNarrowRightIcon />
           </button>
         </div>
 
