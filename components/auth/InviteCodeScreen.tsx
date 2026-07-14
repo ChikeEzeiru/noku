@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, KeyboardEvent, ClipboardEvent } from "react";
+import Image from "next/image";
 
 const VALID_CODE = "123456";
 const CODE_LENGTH = 6;
@@ -30,6 +31,7 @@ function StepDots({ step }: { step: 0 | 1 | 2 | 3 }) {
 export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   const code = digits.join("");
@@ -65,9 +67,14 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
 
   function handlePaste(e: ClipboardEvent<HTMLInputElement>) {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, CODE_LENGTH);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, CODE_LENGTH);
     const next = Array(CODE_LENGTH).fill("");
-    pasted.split("").forEach((d, i) => { next[i] = d; });
+    pasted.split("").forEach((d, i) => {
+      next[i] = d;
+    });
     setDigits(next);
     setError(false);
     focusAt(Math.min(pasted.length, CODE_LENGTH - 1));
@@ -85,16 +92,17 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
   return (
     <div className="min-h-[calc(100vh-44px)] bg-noku-bg flex flex-col justify-between pt-6 pb-10">
       <div className="flex flex-col gap-12 px-6">
-
         {/* Step indicator */}
         <StepDots step={0} />
 
         {/* Illustration + content */}
         <div className="flex flex-col gap-12 items-center">
-          <img
-            src="https://www.figma.com/api/mcp/asset/fb7a5bf6-5e3f-40d2-8966-0e061dcef8b2"
+          <Image
+            src="/Images/Noku Logo Vector.svg"
             alt=""
-            className="w-[200px] h-[200px] object-contain"
+            width={200}
+            height={200}
+            className="w-50 h-50 object-contain"
           />
 
           <div className="w-full flex flex-col gap-8">
@@ -112,14 +120,16 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
               <p className="text-sm font-medium text-noku-text-mid">Code</p>
               <div className="flex gap-2">
                 {digits.map((d, i) => (
-                  <div key={i} className="relative flex-1 min-w-[44px]">
+                  <div key={i} className="relative flex-1 min-w-11">
                     {!d && (
                       <span className="absolute inset-0 flex items-center justify-center text-[18px] font-medium text-noku-text-dim opacity-50 pointer-events-none select-none">
                         0
                       </span>
                     )}
                     <input
-                      ref={(el) => { refs.current[i] = el; }}
+                      ref={(el) => {
+                        refs.current[i] = el;
+                      }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
@@ -127,14 +137,19 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
                       onChange={(e) => handleChange(i, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(i, e)}
                       onPaste={handlePaste}
-                      onFocus={(e) => e.target.select()}
+                      onFocus={(e) => {
+                        setFocusedIndex(i);
+                        e.target.select();
+                      }}
+                      onBlur={() => setFocusedIndex(null)}
                       autoFocus={i === 0}
-                      className={`w-full h-[52px] bg-white rounded-[8px] border px-[14px] py-[10px] text-[18px] font-medium text-center text-noku-heading outline-none transition-colors
-                        ${error
-                          ? "border-noku-red"
-                          : d || document.activeElement === refs.current[i]
-                          ? "border-noku-brand-mid"
-                          : "border-noku-nav-border focus:border-noku-brand-mid"
+                      className={`w-full h-13 bg-white rounded-lg border px-3.5 py-2.5 text-[18px] font-medium text-center text-noku-heading outline-none transition-colors
+                        ${
+                          error
+                            ? "border-noku-red"
+                            : d || focusedIndex === i
+                            ? "border-noku-brand-mid"
+                            : "border-noku-nav-border focus:border-noku-brand-mid"
                         }`}
                       style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
                     />
@@ -142,7 +157,9 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
                 ))}
               </div>
               {error && (
-                <p className="text-xs text-noku-red">Incorrect code. Try <strong>123456</strong></p>
+                <p className="text-xs text-noku-red">
+                  Incorrect code. Try <strong>123456</strong>
+                </p>
               )}
             </div>
           </div>
@@ -157,7 +174,8 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
           className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-50"
           style={{
             backgroundColor: "#17a248",
-            boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
+            boxShadow:
+              "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
           }}
         >
           Continue

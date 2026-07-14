@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 function StepDots({ step }: { step: 0 | 1 | 2 | 3 }) {
   return (
@@ -20,19 +21,36 @@ function StepDots({ step }: { step: 0 | 1 | 2 | 3 }) {
   );
 }
 
-function Stepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function Stepper({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
   return (
     <div
       className="w-full bg-white border border-noku-nav-border rounded-lg flex items-center justify-between overflow-hidden"
       style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
     >
-      <span className="px-3 py-2 text-sm text-noku-heading flex-1">{value}</span>
+      <span className="px-3 py-2 text-sm text-noku-heading flex-1">
+        {value}
+      </span>
       <div className="flex flex-col border-l border-noku-nav-border shrink-0">
         <button
           onClick={() => onChange(value + 1)}
           className="px-3 py-1 text-noku-text-dim border-b border-noku-nav-border hover:bg-noku-warm-hover"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M2 8l4-4 4 4" />
           </svg>
         </button>
@@ -40,7 +58,16 @@ function Stepper({ value, onChange }: { value: number; onChange: (v: number) => 
           onClick={() => onChange(Math.max(1, value - 1))}
           className="px-3 py-1 text-noku-text-dim hover:bg-noku-warm-hover"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M2 4l4 4 4-4" />
           </svg>
         </button>
@@ -50,11 +77,18 @@ function Stepper({ value, onChange }: { value: number; onChange: (v: number) => 
 }
 
 type SetupHouseholdScreenProps = {
-  onComplete: (occupants: number, apartmentType: string, acUnits: number) => void;
+  onComplete: (
+    occupants: number,
+    apartmentType: string,
+    acUnits: number
+  ) => void;
   onBack: () => void;
 };
 
-export default function SetupHouseholdScreen({ onComplete, onBack }: SetupHouseholdScreenProps) {
+export default function SetupHouseholdScreen({
+  onComplete,
+  onBack,
+}: SetupHouseholdScreenProps) {
   const [occupants, setOccupants] = useState(5);
   const [apartmentType, setApartmentType] = useState("3 bedroom apartment");
   const [acUnits, setAcUnits] = useState(4);
@@ -62,16 +96,17 @@ export default function SetupHouseholdScreen({ onComplete, onBack }: SetupHouseh
   return (
     <div className="min-h-[calc(100vh-44px)] bg-noku-bg flex flex-col justify-between pt-6 pb-10">
       <div className="flex flex-col gap-12 px-6">
-
         {/* Step indicator */}
         <StepDots step={3} />
 
         {/* Illustration */}
         <div className="flex items-center justify-center">
-          <img
-            src="https://www.figma.com/api/mcp/asset/fb7a5bf6-5e3f-40d2-8966-0e061dcef8b2"
+          <Image
+            src="/Images/Apartment-illustration.svg"
             alt=""
-            className="w-[200px] h-[200px] object-contain"
+            width={345}
+            height={226}
+            className="w-86.25 h-56.5 object-contain"
           />
         </div>
 
@@ -97,7 +132,9 @@ export default function SetupHouseholdScreen({ onComplete, onBack }: SetupHouseh
 
             {/* Apartment type */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-noku-text-mid">Your apartment is a:</label>
+              <label className="text-sm font-medium text-noku-text-mid">
+                Your apartment is a:
+              </label>
               <input
                 type="text"
                 value={apartmentType}
@@ -120,7 +157,10 @@ export default function SetupHouseholdScreen({ onComplete, onBack }: SetupHouseh
 
       {/* Actions */}
       <div className="px-6 flex items-center justify-end gap-4">
-        <button onClick={onBack} className="text-sm font-semibold text-[#5b5b4b]">
+        <button
+          onClick={onBack}
+          className="text-sm font-semibold text-[#5b5b4b]"
+        >
           Back
         </button>
         <button
@@ -128,11 +168,21 @@ export default function SetupHouseholdScreen({ onComplete, onBack }: SetupHouseh
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white text-sm font-semibold"
           style={{
             backgroundColor: "#17a248",
-            boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
+            boxShadow:
+              "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
           }}
         >
           Complete registration
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M2.667 8.667 6 12l7.333-8" />
           </svg>
         </button>

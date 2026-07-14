@@ -18,7 +18,9 @@ import ReportIssue1 from "@/components/report/ReportIssue1";
 import ReportIssue2 from "@/components/report/ReportIssue2";
 import ReportIssue3 from "@/components/report/ReportIssue3";
 import IssuesScreen from "@/components/report/IssuesScreen";
+import IssueDetailScreen from "@/components/report/IssueDetailScreen";
 import ResidentDetails from "@/components/profile/ResidentDetails";
+import BillingScreen from "@/components/profile/BillingScreen";
 import NotificationPreferences from "@/components/profile/NotificationPreferences";
 import BankTransfer from "@/components/payment/BankTransfer";
 import { NavTab } from "@/components/shared/BottomNav";
@@ -33,6 +35,7 @@ import SetupHouseholdScreen from "@/components/auth/SetupHouseholdScreen";
 import RegistrationConfirmation from "@/components/auth/RegistrationConfirmation";
 import type { PaymentRecord } from "@/types/payment";
 import type { UpdateItem } from "@/types/update";
+import type { Issue } from "@/lib/issues-data";
 
 type AppState =
   | "splash"
@@ -61,10 +64,12 @@ type AppState =
   | "report-issue-3"
   | "resident-details"
   | "notification-preferences"
+  | "billing"
   | "bank-transfer"
   | "issues"
   | "fund-expenditure"
-  | "notifications";
+  | "notifications"
+  | "issue-detail";
 
 function Spinner() {
   return (
@@ -100,6 +105,14 @@ export default function App() {
   }
   const [receiptReturn, setReceiptReturn] = useState<AppState>("payment-success");
   const [selectedUpdate, setSelectedUpdate] = useState<UpdateItem | null>(null);
+  const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+  const [issueDetailReturn, setIssueDetailReturn] = useState<AppState>("issues");
+
+  function openIssueDetail(issue: Issue, returnTo: AppState) {
+    setSelectedIssue(issue);
+    setIssueDetailReturn(returnTo);
+    setScreen("issue-detail");
+  }
   const [reportReturn, setReportReturn] = useState<AppState>("home-unpaid");
   const [issueCategory, setIssueCategory] = useState("");
   const [issueSubject, setIssueSubject] = useState("");
@@ -222,6 +235,7 @@ export default function App() {
             onSeeAll={() => setScreen("payments-history")}
             onReportIssue={() => openReportIssue(homeIsPaid ? "home-paid" : "home-unpaid")}
             onNotifications={() => setScreen("notifications")}
+            onMyUnit={() => setScreen("resident-details")}
           />
         )}
 
@@ -363,7 +377,7 @@ export default function App() {
         {screen === "profile" && (
           <ProfileScreen
             onNavigate={handleNavigate}
-            onBilling={() => openAddPaymentMethod("profile")}
+            onBilling={() => setScreen("billing")}
             onReportIssue={() => setScreen("issues")}
             onResidentDetails={() => setScreen("resident-details")}
             onNotificationPreferences={() => setScreen("notification-preferences")}
@@ -375,6 +389,14 @@ export default function App() {
           <IssuesScreen
             onBack={() => setScreen("profile")}
             onReportIssue={() => openReportIssue("issues")}
+            onSelectIssue={(issue) => openIssueDetail(issue, "issues")}
+          />
+        )}
+
+        {screen === "issue-detail" && selectedIssue && (
+          <IssueDetailScreen
+            issue={selectedIssue}
+            onBack={() => setScreen(issueDetailReturn)}
           />
         )}
 
@@ -429,11 +451,19 @@ export default function App() {
         )}
 
         {screen === "resident-details" && (
-          <ResidentDetails onBack={() => setScreen("profile")} />
+          <ResidentDetails
+            onBack={() => setScreen("profile")}
+            onIssues={() => setScreen("issues")}
+            onIssueDetail={(issue) => openIssueDetail(issue, "resident-details")}
+          />
         )}
 
         {screen === "notification-preferences" && (
           <NotificationPreferences onBack={() => setScreen("profile")} />
+        )}
+
+        {screen === "billing" && (
+          <BillingScreen onBack={() => setScreen("profile")} />
         )}
 
         {screen === "bank-transfer" && (

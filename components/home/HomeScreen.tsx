@@ -38,8 +38,6 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
   badgeLabel: string;
   badgeIconSrc: string;
   imgSrc: string;
-  imgOpacity: number;
-  imgStyle: "crop" | "object-bottom";
   title: string;
   titleColor: string;
   subtitle: string;
@@ -53,8 +51,6 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeLabel: "Power: Generator",
     badgeIconSrc: zapIconOn,
     imgSrc: generatorImgOn,
-    imgOpacity: 1,
-    imgStyle: "crop",
     title: "7:00pm - 2:00am",
     titleColor: "#15522c",
     subtitle: "turns off in 5 hours",
@@ -68,8 +64,6 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeLabel: "Power: Generator",
     badgeIconSrc: zapIconOff,
     imgSrc: generatorImgOff,
-    imgOpacity: 1,
-    imgStyle: "object-bottom",
     title: "Generator Off",
     titleColor: "#474739",
     subtitle: "Resumes 7pm",
@@ -83,8 +77,6 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeLabel: "Power: Generator (rationed)",
     badgeIconSrc: zapIconRationed,
     imgSrc: generatorImgRationed,
-    imgOpacity: 1,
-    imgStyle: "object-bottom",
     title: "7:00pm - 11:00pm",
     titleColor: "#a16207",
     subtitle: "Turns off in 3 hours",
@@ -98,8 +90,6 @@ const STATUS_CONFIG: Record<GeneratorStatus, {
     badgeLabel: "Generator unavailable",
     badgeIconSrc: zapIconRepairs,
     imgSrc: generatorImgRepairs,
-    imgOpacity: 0.75,
-    imgStyle: "object-bottom",
     title: "Repairs ongoing",
     titleColor: "#b91c1c",
     subtitle: "The committee is working on this",
@@ -127,6 +117,7 @@ type HomeScreenProps = {
   onSeeAll: () => void;
   onReportIssue: () => void;
   onNotifications: () => void;
+  onMyUnit: () => void;
 };
 
 export default function HomeScreen({
@@ -138,6 +129,7 @@ export default function HomeScreen({
   onSeeAll,
   onReportIssue,
   onNotifications,
+  onMyUnit,
 }: HomeScreenProps) {
   const [generatorStatus, setGeneratorStatus] = useState<GeneratorStatus>("on");
 
@@ -203,41 +195,29 @@ export default function HomeScreen({
                 {cfg.badgeLabel}
               </span>
             </div>
-            {/* Title */}
-            <p className="text-lg font-semibold leading-7" style={{ color: cfg.titleColor }}>
-              {cfg.title}
-            </p>
-            {/* Subtitle */}
-            <p className="text-[10px] leading-4 font-normal" style={{ color: cfg.subtitleColor }}>
-              {cfg.subtitle}
-            </p>
+            <div className="flex flex-col gap-[2px]">
+              {/* Title */}
+              <p className="text-lg font-semibold leading-7" style={{ color: cfg.titleColor }}>
+                {cfg.title}
+              </p>
+              {/* Subtitle */}
+              <p className="text-[10px] leading-4 font-normal" style={{ color: cfg.subtitleColor }}>
+                {cfg.subtitle}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* House+generator image, absolutely right-aligned, horizontally flipped */}
+        {/* Generator illustration */}
         <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center"
+          className="absolute right-0 top-1/2 -translate-y-1/2"
           style={{ width: 207, height: 134 }}
         >
-          <div style={{ transform: "scaleX(-1)", opacity: cfg.imgOpacity, width: 207, height: 134, position: "relative" }}>
-            {cfg.imgStyle === "crop" ? (
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <img
-                  src={cfg.imgSrc}
-                  alt=""
-                  className="absolute max-w-none"
-                  style={{ height: "145.32%", left: "-50.54%", top: "-24.91%", width: "172.04%" }}
-                />
-              </div>
-            ) : (
-              <img
-                src={cfg.imgSrc}
-                alt=""
-                className="absolute inset-0 max-w-none size-full pointer-events-none"
-                style={{ objectFit: "cover", objectPosition: "bottom" }}
-              />
-            )}
-          </div>
+          <img
+            src={cfg.imgSrc}
+            alt=""
+            className="w-full h-full object-contain object-right"
+          />
         </div>
 
         {/* Demo cycle button */}
@@ -256,10 +236,10 @@ export default function HomeScreen({
         {/* Billing card */}
         <button
           onClick={() => onNavigate("payments")}
-          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col justify-between items-start text-left self-stretch"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-4 items-start text-left self-stretch"
         >
           {/* Top: period + detail */}
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col gap-1 w-full flex-1">
             <div className="flex items-center justify-between w-full">
               <span className="text-xs font-medium leading-[18px]" style={{ color: "#474739" }}>JUN 2026</span>
               <img src={arrowUpRightIcon} alt="" className="w-4 h-4" />
@@ -286,10 +266,10 @@ export default function HomeScreen({
         {/* Fund health card */}
         <button
           onClick={() => onNavigate("fund")}
-          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col justify-between items-start text-left overflow-hidden self-stretch"
+          className="bg-white border border-noku-border-light rounded-[12px] p-3 flex-1 flex flex-col gap-8 items-start text-left overflow-hidden self-stretch"
         >
           {/* Top: label + detail */}
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col gap-1 w-full flex-1">
             <div className="flex items-center justify-between w-full">
               <span className="text-xs font-medium leading-[18px]" style={{ color: "#474739" }}>FUND HEALTH</span>
               <img src={arrowUpRightIcon} alt="" className="w-4 h-4" />
@@ -338,7 +318,7 @@ export default function HomeScreen({
                 <span className="text-xs font-normal leading-[18px]" style={{ color: "#474739" }}>Pay Now</span>
               </button>
               <button
-                onClick={() => onNavigate("profile")}
+                onClick={onMyUnit}
                 className="flex-1 h-16 bg-white border border-noku-border-light rounded-[8px] flex flex-col items-center justify-center gap-1 overflow-hidden p-2"
               >
                 <img src={myUnitIcon} alt="" className="w-5 h-5" />
