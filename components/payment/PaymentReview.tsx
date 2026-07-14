@@ -3,19 +3,17 @@
 import { useState } from "react";
 
 const visaImg = "/images/Payment-method-icon.svg";
+const PAYSTACK_PUBLIC_KEY = "pk_test_c323421ff89e0e03b05fb36fd92aea1fb37042d9";
 
 declare global {
   interface Window {
-    PaystackPop?: {
-      setup: (config: {
+    PaystackPop?: new () => {
+      newTransaction: (config: {
         key: string;
-        email: string;
-        amount: number;
-        ref: string;
-        currency: string;
-        callback: (response: { reference: string; status: string }) => void;
-        onClose: () => void;
-      }) => { openIframe: () => void };
+        accessCode: string;
+        onSuccess: (transaction: { reference: string }) => void;
+        onCancel: () => void;
+      }) => void;
     };
   }
 }
@@ -70,35 +68,30 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
     // Open Paystack inline popup
     if (!window.PaystackPop) {
       setStatus("error");
-      setErrorMsg("Payment provider not loaded. Please refresh and try again.");
+      setErrorMsg("Payment provider not loaded. Please refresh the page and try again.");
       return;
     }
 
-    const handler = window.PaystackPop.setup({
-      key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
-      email: "resident@noku.app",
-      amount: 9500000,
-      ref: reference,
-      currency: "NGN",
-      callback: async (response) => {
+    const popup = new window.PaystackPop();
+    popup.newTransaction({
+      key: PAYSTACK_PUBLIC_KEY,
+      accessCode: access_code,
+      onSuccess: async (transaction) => {
         // Paystack reports success — verify server-side
-        // If verification itself fails, we still mark paid: user's money was taken
+        // If verification fails, we still mark paid: the charge already went through
         try {
-          await fetch(`/api/paystack/verify?reference=${encodeURIComponent(response.reference)}`);
+          await fetch(`/api/paystack/verify?reference=${encodeURIComponent(transaction.reference)}`);
         } catch {
-          // verification network error — payment still happened, proceed
+          // verification network error — proceed anyway
         }
         onPaySuccess();
       },
-      onClose: () => {
+      onCancel: () => {
         // User closed popup without completing payment
         setStatus("idle");
       },
     });
-
-    handler.openIframe();
-    // Keep button in loading state while popup is open;
-    // onClose or callback will resolve it
+    // Status stays "loading" while the popup is open; onSuccess/onCancel resolve it
   }
 
   const isLoading = status === "loading";

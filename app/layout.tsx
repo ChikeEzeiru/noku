@@ -40,7 +40,7 @@ export default function RootLayout({
       </head>
       <body className={`${dmSans.variable} font-sans antialiased`}>
         {children}
-        <Script src="https://js.paystack.co/v1/inline.js" strategy="afterInteractive" />
+        <Script src="https://js.paystack.co/v2/inline.js" strategy="afterInteractive" />
       </body>
     </html>
   );
