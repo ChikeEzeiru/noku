@@ -53,7 +53,7 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: "ciroma.adekunle@noku.test",
+          email: "resident@noku.app",
           amount: 9500000, // ₦95,000 in kobo
           reference,
         }),
@@ -76,7 +76,7 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
 
     const handler = window.PaystackPop.setup({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
-      email: "ciroma.adekunle@noku.test",
+      email: "resident@noku.app",
       amount: 9500000,
       ref: reference,
       currency: "NGN",
@@ -104,8 +104,8 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
   const isLoading = status === "loading";
 
   return (
-    <div className="bg-noku-bg min-h-screen flex flex-col">
-      <div className="flex-1 flex flex-col gap-6 pt-6 pb-6">
+    <div className="bg-noku-bg flex flex-col h-[calc(100vh-44px)]">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-6 pt-6 pb-6">
         {/* Back button */}
         <div className="px-6">
           <button
@@ -190,8 +190,8 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="px-6 pb-10 flex flex-col gap-3">
+      {/* Action buttons — pinned to bottom, never clips */}
+      <div className="shrink-0 px-6 pb-10 flex flex-col gap-3">
         {status === "error" && (
           <p className="text-xs text-red-600 text-center leading-5">{errorMsg}</p>
         )}
