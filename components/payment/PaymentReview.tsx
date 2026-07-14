@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const visaImg = "/images/Payment-method-icon.svg";
 const PAYSTACK_PUBLIC_KEY = "pk_test_c323421ff89e0e03b05fb36fd92aea1fb37042d9";
@@ -34,32 +34,48 @@ type PaymentReviewProps = {
   onAddPaymentMethod: () => void;
 };
 
+function generateReference() {
+  return `NOKU-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+}
+
+async function initializeTransaction() {
+  const reference = generateReference();
+  const res = await fetch("/api/paystack/initialize", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: "resident@noku.app", amount: 9500000, reference }),
+  });
+  const data = await res.json();
+  if (!res.ok || data.error) throw new Error(data.error ?? "Initialization failed");
+  return data.access_code as string;
+}
+
 export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod }: PaymentReviewProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Pre-initialize the transaction on mount so the access_code is ready when the user taps pay
+  const preflight = useRef<Promise<string> | null>(null);
+  useEffect(() => {
+    preflight.current = initializeTransaction().catch(() => null as unknown as string);
+  }, []);
 
   async function handlePay() {
     setStatus("loading");
     setErrorMsg("");
 
-    // Generate a unique reference for this transaction
-    const reference = `NOKU-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-
-    // Initialize transaction server-side
+    // Use pre-initialized access_code if available, otherwise initialize now
     let access_code: string;
     try {
-      const res = await fetch("/api/paystack/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "resident@noku.app",
-          amount: 9500000, // ₦95,000 in kobo
-          reference,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error ?? "Initialization failed");
-      access_code = data.access_code;
+      const preflightResult = await preflight.current;
+      if (preflightResult) {
+        access_code = preflightResult;
+      } else {
+        // Preflight failed earlier — try once more
+        access_code = await initializeTransaction();
+      }
+      // Refresh preflight for any subsequent attempt (e.g. user cancels and retries)
+      preflight.current = initializeTransaction().catch(() => null as unknown as string);
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Could not connect to payment provider. Please try again.");
