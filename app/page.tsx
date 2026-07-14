@@ -47,7 +47,6 @@ type AppState =
   | "auth-confirmation"
   | "home-unpaid"
   | "payment-review"
-  | "payment-processing"
   | "payment-success"
   | "home-paid"
   | "receipt"
@@ -71,22 +70,6 @@ type AppState =
   | "notifications"
   | "issue-detail";
 
-function Spinner() {
-  return (
-    <svg
-      className="animate-spin"
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="white"
-      strokeWidth="2"
-    >
-      <circle cx="10" cy="10" r="8" strokeOpacity="0.25" />
-      <path d="M10 2a8 8 0 0 1 8 8" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 export default function App() {
   const [screen, setScreen] = useState<AppState>("splash");
@@ -146,12 +129,9 @@ export default function App() {
     setScreen("receipt");
   }
 
-  function handlePay() {
-    setScreen("payment-processing");
-    setTimeout(() => {
-      setHasPaid(true);
-      setScreen("payment-success");
-    }, 2000);
+  function handlePaySuccess() {
+    setHasPaid(true);
+    setScreen("payment-success");
   }
 
   function handleNavigate(tab: NavTab) {
@@ -241,78 +221,12 @@ export default function App() {
 
         {screen === "payment-review" && (
           <PaymentReview
-            onPay={handlePay}
+            onPaySuccess={handlePaySuccess}
             onBack={() => setScreen(paymentReviewReturn)}
             onAddPaymentMethod={() => openAddPaymentMethod("payment-review")}
           />
         )}
 
-        {screen === "payment-processing" && (
-          <div className="bg-noku-bg min-h-screen flex flex-col">
-            <div className="flex-1 flex flex-col gap-6 pt-6 pb-6">
-              <div className="px-6">
-                <div className="border border-noku-border-light rounded-lg p-1.5 flex items-center gap-2 text-noku-text-mid w-fit opacity-50">
-                  <span className="text-xs">Back</span>
-                </div>
-              </div>
-
-              <div className="px-6 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-noku-text-dim uppercase tracking-[0.06em]">
-                    Billing Details
-                  </p>
-                  <span className="text-[10px] font-medium text-noku-overdue-text bg-noku-overdue-bg border border-noku-overdue-border rounded-md px-1.5 py-0.5">
-                    Overdue
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-start gap-2 p-2">
-                    <p className="text-sm text-noku-text-dim min-w-[124px]">Billing Period:</p>
-                    <p className="text-sm font-medium text-noku-text-mid">June 2026</p>
-                  </div>
-                  <div className="px-2">
-                    <p className="text-xl font-semibold text-noku-heading">₦95,000</p>
-                  </div>
-                  <div className="bg-noku-warm-hover border border-noku-border-light rounded-lg p-3 flex flex-col gap-1 mt-1">
-                    <div className="flex items-center justify-between p-1">
-                      <p className="text-sm text-noku-text-dim">Base amount:</p>
-                      <p className="text-sm font-medium text-noku-text-mid">₦95,000</p>
-                    </div>
-                    <div className="flex items-center justify-between p-1 opacity-50">
-                      <p className="text-sm text-noku-text-dim">Credit/shortfall from prev mth:</p>
-                      <p className="text-sm font-medium text-noku-text-mid">₦0</p>
-                    </div>
-                    <div className="flex items-center justify-between p-1">
-                      <p className="text-sm text-noku-text-dim">Final amount charged</p>
-                      <p className="text-sm font-medium text-noku-text-mid">₦95,000</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2">
-                  <p className="text-sm text-noku-text-dim min-w-[124px]">Apartment details:</p>
-                  <p className="text-sm font-medium text-noku-text-mid">5 occupants · 3 bed · 4 ACs</p>
-                </div>
-                <div className="border-t border-noku-border-light" />
-                <div className="flex flex-col gap-4">
-                  <p className="text-xs font-medium text-noku-text-dim uppercase tracking-[0.06em]">
-                    Payment Method
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="px-6 pb-10 flex flex-col gap-4">
-              <button
-                disabled
-                className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-2 opacity-90"
-              >
-                <Spinner />
-                Processing…
-              </button>
-              <div className="h-[40px]" />
-            </div>
-          </div>
-        )}
 
         {screen === "payment-success" && (
           <PaymentSuccess

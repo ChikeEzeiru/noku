@@ -138,8 +138,9 @@ export default function SetupHouseholdScreen({
               <input
                 type="text"
                 value={apartmentType}
-                onChange={(e) => setApartmentType(e.target.value)}
-                className="w-full bg-white border border-noku-nav-border rounded-lg px-3 py-2 text-sm text-noku-heading outline-none focus:border-noku-brand-mid"
+                readOnly
+                disabled
+                className="w-full bg-[#f4f4f0] border border-noku-nav-border rounded-lg px-3 py-2 text-sm text-noku-text-dim cursor-not-allowed"
                 style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
               />
             </div>

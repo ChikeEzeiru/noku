@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -39,6 +40,7 @@ export default function RootLayout({
       </head>
       <body className={`${dmSans.variable} font-sans antialiased`}>
         {children}
+        <Script src="https://js.paystack.co/v1/inline.js" strategy="afterInteractive" />
       </body>
     </html>
   );
