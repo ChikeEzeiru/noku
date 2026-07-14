@@ -33,8 +33,8 @@ export default function ConfirmUnitScreen({
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-noku-bg flex flex-col justify-between pt-6 pb-10">
-      <div className="flex flex-col gap-2 px-6">
+    <div className="h-[calc(100vh-44px)] bg-noku-bg flex flex-col">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-6 pt-6">
         <StepDots step={1} />
 
         {/* Building illustration */}
@@ -114,7 +114,7 @@ export default function ConfirmUnitScreen({
       </div>
 
       {/* Actions */}
-      <div className="px-6 flex items-center justify-end gap-4">
+      <div className="shrink-0 px-6 pb-10 pt-4 flex items-center justify-end gap-4">
         <button
           onClick={onNotRight}
           className="text-sm font-semibold text-[#5b5b4b]"

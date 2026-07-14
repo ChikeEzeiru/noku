@@ -29,7 +29,7 @@ export default function Receipt({ onBack, payment }: ReceiptProps) {
   const channelLabel = p.channel === "In app" ? "In app (Card)" : p.channel;
 
   return (
-    <div className="bg-noku-bg min-h-screen flex flex-col gap-6 pt-6 pb-10">
+    <div className="bg-noku-bg h-[calc(100vh-44px)] overflow-y-auto flex flex-col gap-6 pt-6 pb-10">
       {/* Header row: Back + Share */}
       <div className="px-6 flex items-center justify-between">
         <button

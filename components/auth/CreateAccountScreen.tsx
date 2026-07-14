@@ -38,8 +38,8 @@ export default function CreateAccountScreen({
   const canProceed = name.trim() && phone.trim() && password.length >= 6;
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-noku-bg flex flex-col justify-between pt-6 pb-10">
-      <div className="flex flex-col gap-12 px-6">
+    <div className="h-[calc(100vh-44px)] bg-noku-bg flex flex-col">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-12 px-6 pt-6">
         {/* Step indicator */}
         <StepDots step={2} />
 
@@ -149,7 +149,7 @@ export default function CreateAccountScreen({
       </div>
 
       {/* Actions */}
-      <div className="px-6 flex items-center justify-end gap-4">
+      <div className="shrink-0 px-6 pb-10 pt-4 flex items-center justify-end gap-4">
         <button
           onClick={onBack}
           className="text-sm font-semibold text-[#5b5b4b]"

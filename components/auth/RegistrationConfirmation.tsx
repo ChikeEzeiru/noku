@@ -43,8 +43,8 @@ export default function RegistrationConfirmation({
   const firstName = name.split(" ")[0] || "there";
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-noku-bg flex flex-col justify-between pt-6 pb-10">
-      <div className="flex flex-col gap-12 px-6">
+    <div className="h-[calc(100vh-44px)] bg-noku-bg flex flex-col">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-12 px-6 pt-6">
         {/* Illustration */}
         <div className="flex items-center justify-center">
           <Image
@@ -85,7 +85,7 @@ export default function RegistrationConfirmation({
       </div>
 
       {/* CTA */}
-      <div className="px-6 flex justify-end">
+      <div className="shrink-0 px-6 pb-10 pt-4 flex justify-end">
         <button
           onClick={onContinue}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white text-sm font-semibold"

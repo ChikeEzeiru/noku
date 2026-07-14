@@ -58,8 +58,8 @@ export default function AddCard({ onBack, onConfirm }: AddCardProps) {
   ].join(" ");
 
   return (
-    <div className="bg-noku-bg min-h-screen flex flex-col justify-between pt-6 pb-10">
-      <div className="flex flex-col gap-6">
+    <div className="bg-noku-bg h-[calc(100vh-44px)] flex flex-col">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-6 pt-6">
         {/* Back button */}
         <div className="px-6">
           <button
@@ -182,7 +182,7 @@ export default function AddCard({ onBack, onConfirm }: AddCardProps) {
       </div>
 
       {/* CTA */}
-      <div className="px-6">
+      <div className="shrink-0 px-6 pb-10 pt-4">
         <button
           onClick={onConfirm}
           className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1"
