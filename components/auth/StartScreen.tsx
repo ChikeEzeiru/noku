@@ -3,9 +3,10 @@ import Image from "next/image";
 
 type StartScreenProps = {
   onRegister: () => void;
+  onSignIn: () => void;
 };
 
-export default function StartScreen({ onRegister }: StartScreenProps) {
+export default function StartScreen({ onRegister, onSignIn }: StartScreenProps) {
   return (
     <div
       className="min-h-[calc(100vh-44px)] relative flex flex-col overflow-hidden"
@@ -49,8 +50,19 @@ export default function StartScreen({ onRegister }: StartScreenProps) {
         </div>
       </div>
 
-      {/* Register button */}
-      <div className="relative z-10 mt-auto px-6 pb-10 flex justify-end">
+      {/* CTAs */}
+      <div className="relative z-10 mt-auto px-6 pb-10 flex items-center justify-end gap-4">
+        <button
+          onClick={onSignIn}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-white text-sm font-semibold"
+          style={{
+            backgroundColor: "#17a248",
+            boxShadow:
+              "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
+          }}
+        >
+          Sign In
+        </button>
         <button
           onClick={onRegister}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-base font-semibold"

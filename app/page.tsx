@@ -164,7 +164,10 @@ export default function App() {
         )}
 
         {screen === "start" && (
-          <StartScreen onRegister={() => setScreen("auth-invite")} />
+          <StartScreen
+            onRegister={() => setScreen("auth-invite")}
+            onSignIn={() => setScreen("home-unpaid")}
+          />
         )}
 
         {screen === "auth-invite" && (
