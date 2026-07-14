@@ -11,6 +11,7 @@ declare global {
       newTransaction: (config: {
         key: string;
         accessCode: string;
+        channels?: string[];
         onSuccess: (transaction: { reference: string }) => void;
         onCancel: () => void;
       }) => void;
@@ -76,6 +77,7 @@ export default function PaymentReview({ onPaySuccess, onBack, onAddPaymentMethod
     popup.newTransaction({
       key: PAYSTACK_PUBLIC_KEY,
       accessCode: access_code,
+      channels: ["card", "bank", "bank_transfer", "ussd"] as string[],
       onSuccess: async (transaction) => {
         // Paystack reports success — verify server-side
         // If verification fails, we still mark paid: the charge already went through

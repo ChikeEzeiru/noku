@@ -1,11 +1,18 @@
 "use client";
 
-
 function CheckCircleIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="10" cy="10" r="8.333"/>
       <path d="m6.667 10 2.5 2.5 4.166-5"/>
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.333 8h9.334M8.667 4 13 8l-4.333 4"/>
     </svg>
   );
 }
@@ -17,8 +24,8 @@ type PaymentSuccessProps = {
 
 export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentSuccessProps) {
   return (
-    <div className="bg-noku-bg min-h-screen flex flex-col">
-      <div className="flex-1 flex flex-col gap-6 pt-6">
+    <div className="bg-noku-bg flex flex-col h-[calc(100vh-44px)]">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-6 pt-6">
         {/* Back to home */}
         <div className="px-6">
           <button
@@ -35,7 +42,7 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
           {/* Success icon */}
           <div className="flex flex-col items-center gap-4">
             <div
-              className="w-10 h-10 rounded-lg bg-noku-success flex items-center justify-center shadow-sm"
+              className="w-10 h-10 rounded-lg bg-noku-success flex items-center justify-center"
               style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
             >
               <CheckCircleIcon />
@@ -45,7 +52,6 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
 
           {/* Payment summary */}
           <div className="w-full flex flex-col gap-4">
-            {/* Billing period + amount */}
             <div className="flex flex-col gap-1">
               <div className="flex items-start justify-between p-2">
                 <p className="text-sm text-noku-text-dim min-w-[124px]">Billing Period:</p>
@@ -58,7 +64,6 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
                 </span>
               </div>
 
-              {/* Transaction details box */}
               <div className="bg-white border border-noku-border-light rounded-lg p-3 flex flex-col gap-1 mt-1">
                 <div className="flex items-start justify-between p-1">
                   <p className="text-sm text-noku-text-dim">Reference:</p>
@@ -75,7 +80,6 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
               </div>
             </div>
 
-            {/* Apartment details */}
             <div className="flex items-start gap-2 p-2">
               <p className="text-sm text-noku-text-dim min-w-[124px]">Apartment details:</p>
               <p className="text-sm font-medium text-noku-text-mid">
@@ -86,14 +90,15 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
         </div>
       </div>
 
-      {/* View Receipt button */}
-      <div className="px-6 pb-10">
+      {/* CTA */}
+      <div className="shrink-0 px-6 pb-10">
         <button
           onClick={onViewReceipt}
-          className="w-full border border-noku-nav-border bg-white rounded-lg py-2.5 text-sm font-semibold text-noku-text-mid shadow-sm"
-          style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
+          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1"
+          style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)" }}
         >
           View Receipt
+          <ArrowRightIcon />
         </button>
       </div>
     </div>
