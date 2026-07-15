@@ -54,12 +54,8 @@ export default function StartScreen({ onRegister, onSignIn }: StartScreenProps) 
       <div className="relative z-10 mt-auto px-6 pb-10 flex items-center justify-end gap-4">
         <button
           onClick={onSignIn}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-white text-sm font-semibold"
-          style={{
-            backgroundColor: "#17a248",
-            boxShadow:
-              "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
-          }}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-[#404040] bg-white border border-noku-border-light"
+          style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
         >
           Sign In
         </button>

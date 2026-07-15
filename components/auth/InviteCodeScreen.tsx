@@ -31,6 +31,7 @@ function StepDots({ step }: { step: 0 | 1 | 2 | 3 }) {
 export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState(false);
+  const [shaking, setShaking] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -86,6 +87,8 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
       onNext();
     } else {
       setError(true);
+      setShaking(true);
+      setTimeout(() => setShaking(false), 500);
     }
   }
 
@@ -118,7 +121,7 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
             {/* OTP boxes */}
             <div className="flex flex-col gap-1.5">
               <p className="text-sm font-medium text-noku-text-mid">Code</p>
-              <div className="flex gap-2">
+              <div className={`flex gap-2 ${shaking ? "animate-[shake_0.5s_ease-in-out]" : ""}`}>
                 {digits.map((d, i) => (
                   <div key={i} className="relative flex-1 min-w-11">
                     {!d && (
@@ -158,7 +161,7 @@ export default function InviteCodeScreen({ onNext }: InviteCodeScreenProps) {
               </div>
               {error && (
                 <p className="text-xs text-noku-red">
-                  Incorrect code. Try <strong>123456</strong>
+                  For this prototype, please use the code <strong>123456</strong>
                 </p>
               )}
             </div>

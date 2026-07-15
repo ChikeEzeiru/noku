@@ -1,6 +1,5 @@
 "use client";
 
-import { issues } from "@/lib/issues-data";
 import type { Issue } from "@/lib/issues-data";
 
 function PlusIcon() {
@@ -17,12 +16,13 @@ const statusStyle = {
 } as const;
 
 type IssuesScreenProps = {
+  issues: Issue[];
   onBack: () => void;
   onReportIssue: () => void;
   onSelectIssue: (issue: Issue) => void;
 };
 
-export default function IssuesScreen({ onBack, onReportIssue, onSelectIssue }: IssuesScreenProps) {
+export default function IssuesScreen({ issues, onBack, onReportIssue, onSelectIssue }: IssuesScreenProps) {
   return (
     <div className="bg-noku-bg min-h-screen pb-10">
       <div className="flex flex-col gap-8 pt-6">

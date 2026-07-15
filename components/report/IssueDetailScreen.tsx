@@ -7,22 +7,16 @@ const statusStyle = {
   "Resolved":  { bg: "#f0fdf4", border: "#bbf7d0", text: "#15803d" },
 };
 
+const FILE_TYPE_ICONS: Record<string, string> = {
+  JPG: "/icons/AttachmentIcon - JPG.svg",
+  PNG: "/icons/AttachmentIcon - PNG.svg",
+  GIF: "/icons/AttachmentIcon - GIF.svg",
+  SVG: "/icons/AttachmentIcon - SVG.svg",
+};
+
 function FileIcon({ fileType }: { fileType: string }) {
-  return (
-    <div className="relative w-10 h-10 shrink-0">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="absolute inset-0">
-        <rect x="7" y="2" width="22" height="28" rx="2" fill="white" stroke="#d4d4d4" strokeWidth="1" />
-        <path d="M22 2 L29 9 L22 9 Z" fill="#e8e8e3" />
-        <path d="M22 2 L22 9 L29 9" fill="none" stroke="#d4d4d4" strokeWidth="1" />
-      </svg>
-      <div
-        className="absolute bottom-[4px] left-[4px] rounded-[2px] px-[3px] py-[1px] flex items-center justify-center"
-        style={{ backgroundColor: "#facc15" }}
-      >
-        <span className="text-[8px] font-bold leading-none text-[#1d1d16]">{fileType}</span>
-      </div>
-    </div>
-  );
+  const src = FILE_TYPE_ICONS[fileType] ?? "/icons/AttachmentIcon.svg";
+  return <img src={src} alt={fileType} className="w-10 h-10 shrink-0" />;
 }
 
 function Divider() {

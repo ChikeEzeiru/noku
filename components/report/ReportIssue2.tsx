@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 
 function ArrowRightIcon() {
   return (
@@ -7,6 +8,51 @@ function ArrowRightIcon() {
       <path d="M4.167 10h11.666M10.833 5l5 5-5 5"/>
     </svg>
   );
+}
+
+function TrashIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 4h12M5.333 4V2.667a.667.667 0 0 1 .667-.667h4a.667.667 0 0 1 .667.667V4M6.667 7.333v4M9.333 7.333v4M3.333 4l.667 8a1.333 1.333 0 0 0 1.333 1.333h5.334A1.333 1.333 0 0 0 12 12l.667-8"/>
+    </svg>
+  );
+}
+
+function CheckCircleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#17a248" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="8" r="6.667"/>
+      <path d="m5.333 8 1.667 1.667 3.333-3.334"/>
+    </svg>
+  );
+}
+
+const FILE_TYPE_ICONS: Record<string, string> = {
+  JPG: "/icons/AttachmentIcon - JPG.svg",
+  PNG: "/icons/AttachmentIcon - PNG.svg",
+  GIF: "/icons/AttachmentIcon - GIF.svg",
+  SVG: "/icons/AttachmentIcon - SVG.svg",
+};
+
+function FileTypeIcon({ ext }: { ext: string }) {
+  const src = FILE_TYPE_ICONS[ext] ?? "/icons/AttachmentIcon.svg";
+  return <img src={src} alt={ext} className="w-10 h-10 shrink-0" />;
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getExt(file: File) {
+  const map: Record<string, string> = {
+    "image/jpeg": "JPG",
+    "image/png": "PNG",
+    "image/gif": "GIF",
+    "image/svg+xml": "SVG",
+  };
+  return map[file.type] ?? file.name.split(".").pop()?.toUpperCase() ?? "FILE";
 }
 
 function RefreshIcon() {
@@ -22,19 +68,34 @@ type ReportIssue2Props = {
   category: string;
   subject: string;
   description: string;
+  attachment: File | null;
   onSubjectChange: (v: string) => void;
   onDescriptionChange: (v: string) => void;
+  onAttachmentChange: (file: File | null) => void;
   onNext: () => void;
   onBack: () => void;
   onChangeCategory: () => void;
 };
 
 export default function ReportIssue2({
-  category, subject, description,
-  onSubjectChange, onDescriptionChange,
+  category, subject, description, attachment,
+  onSubjectChange, onDescriptionChange, onAttachmentChange,
   onNext, onBack, onChangeCategory,
 }: ReportIssue2Props) {
   const canProceed = subject.trim().length > 0 && description.trim().length > 0;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 1024 * 1024) return;
+    onAttachmentChange(file);
+  }
+
+  function clearAttachment() {
+    onAttachmentChange(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   return (
     <div className="bg-noku-bg flex flex-col h-[calc(100vh-44px)]">
@@ -76,7 +137,7 @@ export default function ReportIssue2({
               className="self-start bg-white border border-noku-border-primary rounded-lg px-2.5 py-1 flex items-center gap-1.5 text-sm font-medium text-[#404040]"
               style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
             >
-              {category} Issue
+              {category}
               <RefreshIcon />
             </button>
           </div>
@@ -116,17 +177,64 @@ export default function ReportIssue2({
             <label className="text-sm font-medium text-noku-text-mid">
               Attachment <span className="text-noku-text-dim font-normal">(optional)</span>
             </label>
-            <div
-              className="w-full flex rounded-lg overflow-hidden border border-noku-nav-border bg-white"
-              style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
-            >
-              <div className="flex-1 px-3 py-2.5 text-sm text-noku-text-subtle">
-                Upload an attachment
+
+            {attachment ? (
+              /* Uploaded state */
+              <div
+                className="w-full bg-white border border-[#e5e5e5] rounded-xl p-4 flex items-start gap-3 relative"
+                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
+              >
+                <FileTypeIcon ext={getExt(attachment)} />
+                <div className="flex-1 flex flex-col gap-1.5 min-w-0">
+                  <p className="text-sm font-medium text-[#404040] truncate">{attachment.name}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-[#525252]">{formatBytes(attachment.size)}</span>
+                    <span className="w-px h-3 bg-[#d4d4d4]" />
+                    <div className="flex items-center gap-1">
+                      <CheckCircleIcon />
+                      <span className="text-sm text-[#525252]">100%</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={clearAttachment}
+                  className="absolute top-2 right-2 p-1.5 rounded-md text-noku-text-dim hover:bg-noku-bg"
+                >
+                  <TrashIcon />
+                </button>
               </div>
-              <div className="border-l border-noku-nav-border px-3.5 py-2.5 text-sm font-semibold text-[#404040] shrink-0">
-                Browse
-              </div>
-            </div>
+            ) : (
+              /* Dropzone */
+              <label
+                className="w-full bg-white border border-[#e5e5e5] rounded-xl px-6 py-4 flex flex-col items-center gap-3 cursor-pointer"
+                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/svg+xml,image/png,image/jpeg,image/gif"
+                  className="sr-only"
+                  onChange={handleFileChange}
+                />
+                <div
+                  className="w-10 h-10 bg-noku-bg rounded-[6px] flex items-center justify-center"
+                  style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px rgba(0,0,0,0.05)" }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#474739" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6.667 13.333S4.167 13.333 4.167 10.833a4.167 4.167 0 0 1 3.916-4.158 3.333 3.333 0 0 1 6.25 1.492c0 .055-.002.11-.005.166A3.333 3.333 0 0 1 13.333 15"/>
+                    <path d="M10 13.333v5M8.333 15l1.667-1.667L11.667 15"/>
+                  </svg>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-semibold text-[#474739]">Click to upload</span>
+                    <span className="text-sm text-[#525252]">or drag and drop</span>
+                  </div>
+                  <p className="text-xs text-[#525252] text-center">SVG, PNG, JPG or GIF (max. 1mb)</p>
+                </div>
+              </label>
+            )}
           </div>
         </div>
       </div>

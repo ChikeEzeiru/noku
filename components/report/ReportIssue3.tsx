@@ -1,5 +1,21 @@
 "use client";
 
+const FILE_TYPE_ICONS: Record<string, string> = {
+  JPG: "/icons/AttachmentIcon - JPG.svg",
+  PNG: "/icons/AttachmentIcon - PNG.svg",
+  GIF: "/icons/AttachmentIcon - GIF.svg",
+  SVG: "/icons/AttachmentIcon - SVG.svg",
+};
+
+function getExt(file: File) {
+  const map: Record<string, string> = {
+    "image/jpeg": "JPG",
+    "image/png": "PNG",
+    "image/gif": "GIF",
+    "image/svg+xml": "SVG",
+  };
+  return map[file.type] ?? file.name.split(".").pop()?.toUpperCase() ?? "FILE";
+}
 
 function CheckIcon() {
   return (
@@ -30,6 +46,7 @@ type ReportIssue3Props = {
   category: string;
   subject: string;
   description: string;
+  attachment: File | null;
   onEdit: () => void;
   onChangeCategory: () => void;
   onSubmit: () => void;
@@ -37,7 +54,7 @@ type ReportIssue3Props = {
 };
 
 export default function ReportIssue3({
-  category, subject, description,
+  category, subject, description, attachment,
   onEdit, onChangeCategory, onSubmit, onBack,
 }: ReportIssue3Props) {
   return (
@@ -65,31 +82,54 @@ export default function ReportIssue3({
 
         {/* Summary card */}
         <div className="px-6 py-2">
-          <div className="bg-white border border-noku-nav-border rounded-xl p-3 flex flex-col gap-4">
+          <div className="bg-white border border-[#d8d8d0] rounded-xl p-3 flex flex-col gap-4">
+
             {/* Category */}
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm text-noku-text-dim">Category</p>
+              <p className="text-sm text-[#7c7c67]">Category</p>
               <button
                 onClick={onChangeCategory}
-                className="self-start bg-white border border-noku-border-primary rounded-lg px-2.5 py-1 flex items-center gap-1.5 text-sm font-medium text-[#404040]"
+                className="self-start bg-white border border-[#d4d4d4] rounded-lg px-2.5 py-1 flex items-center gap-1.5 text-sm font-medium text-[#404040]"
                 style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
               >
-                {category} Issue
-                <RefreshIcon />
+                <div className="w-2 h-2 rounded-full bg-[#abab9c] shrink-0" />
+                {category}
               </button>
             </div>
 
+            {/* Full-bleed divider */}
+            <div className="h-px bg-[#e8e8e3] -mx-3" />
+
             {/* Subject */}
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm text-noku-text-dim">Subject</p>
-              <p className="text-sm text-noku-text-mid">{subject}</p>
+              <p className="text-sm text-[#7c7c67]">Subject</p>
+              <p className="text-sm font-semibold text-[#474739]">{subject}</p>
             </div>
+
+            <div className="h-px bg-[#e8e8e3] -mx-3" />
 
             {/* Description */}
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm text-noku-text-dim">Description</p>
-              <p className="text-sm text-noku-text-mid leading-5">{description}</p>
+              <p className="text-sm text-[#7c7c67]">Description</p>
+              <p className="text-sm text-[#474739] leading-5">{description}</p>
             </div>
+
+            <div className="h-px bg-[#e8e8e3] -mx-3" />
+
+            {/* Attachment */}
+            {attachment && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-sm text-[#7c7c67]">Attachment</p>
+                <div className="flex items-end gap-1">
+                  <img
+                    src={FILE_TYPE_ICONS[getExt(attachment)] ?? "/icons/AttachmentIcon.svg"}
+                    alt={getExt(attachment)}
+                    className="w-10 h-10 shrink-0"
+                  />
+                  <p className="text-[10px] font-semibold text-[#474739] leading-4 pb-1">{attachment.name}</p>
+                </div>
+              </div>
+            )}
 
             {/* Edit button */}
             <div className="flex justify-end">
@@ -101,6 +141,7 @@ export default function ReportIssue3({
                 <EditIcon />
               </button>
             </div>
+
           </div>
         </div>
       </div>

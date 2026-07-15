@@ -135,9 +135,9 @@ const typeConfig: Record<NotifType, { color: string; icon: React.ReactNode }> = 
 function NotifRow({ notif }: { notif: Notification }) {
   const { color, icon } = typeConfig[notif.type];
   return (
-    <div className="flex gap-3 py-3 border-b border-noku-border-light last:border-0">
+    <div className="flex gap-3 py-3 px-4 border-b border-noku-border-light last:border-0">
       <div
-        className="w-8 h-8 rounded-md border border-noku-border-primary bg-noku-bg flex items-center justify-center shadow-sm shrink-0 mt-0.5"
+        className="w-8 h-8 rounded-md border border-noku-border-primary bg-noku-bg flex items-center justify-center shadow-sm shrink-0 mt-0.5 opacity-60"
         style={{ color }}
       >
         {icon}
@@ -164,9 +164,9 @@ type NotificationsScreenProps = {
 
 export default function NotificationsScreen({ onBack }: NotificationsScreenProps) {
   return (
-    <div className="bg-noku-bg min-h-screen pb-10">
+    <div className="bg-noku-bg h-[calc(100vh-44px)] overflow-y-auto flex flex-col gap-6 pt-6 pb-10">
       {/* Back */}
-      <div className="px-6 pt-6">
+      <div className="px-5">
         <button
           onClick={onBack}
           className="border border-noku-border-light rounded-lg p-1.5 flex items-center gap-2 text-noku-text-mid"
@@ -177,17 +177,17 @@ export default function NotificationsScreen({ onBack }: NotificationsScreenProps
       </div>
 
       {/* Header */}
-      <div className="px-6 mt-6 flex items-center justify-between">
-        <p className="text-xs font-medium text-noku-text-dim uppercase tracking-[0.06em]">
-          Notifications
-        </p>
+      <div className="px-5 -mt-2">
+        <p className="text-base font-medium leading-6 text-noku-text-dim">Notifications</p>
       </div>
 
       {/* List */}
-      <div className="px-6 mt-4 bg-white border border-noku-border-light rounded-xl divide-y-0">
-        {notifications.map((notif, i) => (
-          <NotifRow key={i} notif={notif} />
-        ))}
+      <div className="px-5 -mt-2">
+        <div className="bg-white border border-noku-border-light rounded-xl">
+          {notifications.map((notif, i) => (
+            <NotifRow key={i} notif={notif} />
+          ))}
+        </div>
       </div>
     </div>
   );

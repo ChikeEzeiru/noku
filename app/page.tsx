@@ -36,6 +36,7 @@ import RegistrationConfirmation from "@/components/auth/RegistrationConfirmation
 import type { PaymentRecord } from "@/types/payment";
 import type { UpdateItem } from "@/types/update";
 import type { Issue } from "@/lib/issues-data";
+import { issues as seedIssues } from "@/lib/issues-data";
 
 type AppState =
   | "splash"
@@ -100,17 +101,47 @@ export default function App() {
   const [issueCategory, setIssueCategory] = useState("");
   const [issueSubject, setIssueSubject] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
+  const [issueAttachment, setIssueAttachment] = useState<File | null>(null);
+  const [issuesList, setIssuesList] = useState<Issue[]>(seedIssues);
   const [showIssueToast, setShowIssueToast] = useState(false);
+
+  const CATEGORY_DOT_COLORS: Record<string, string> = {
+    "Billing":        "#f97316",
+    "Generator":      "#0ea5e9",
+    "Payment":        "#6366f1",
+    "Household data": "#8b5cf6",
+    "Other":          "#6b7280",
+  };
 
   function openReportIssue(returnTo: AppState) {
     setReportReturn(returnTo);
     setIssueCategory("");
     setIssueSubject("");
     setIssueDescription("");
+    setIssueAttachment(null);
     setScreen("report-issue-1");
   }
 
   function handleSubmitIssue() {
+    const today = new Date();
+    const dateShort = today.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+    const newIssue: Issue = {
+      id: Date.now(),
+      category: issueCategory,
+      dotColor: CATEGORY_DOT_COLORS[issueCategory] ?? "#6b7280",
+      subject: issueSubject,
+      dateReported: dateShort,
+      dateLong: `Reported ${dateShort}`,
+      status: "In review",
+      description: issueDescription,
+      ...(issueAttachment && {
+        attachment: {
+          name: issueAttachment.name,
+          fileType: issueAttachment.name.split(".").pop()?.toUpperCase() ?? "FILE",
+        },
+      }),
+    };
+    setIssuesList((prev) => [newIssue, ...prev]);
     const dest: AppState = reportReturn === "issues" ? "issues" : hasPaid ? "home-paid" : "home-unpaid";
     setScreen(dest);
     setShowIssueToast(true);
@@ -304,6 +335,7 @@ export default function App() {
 
         {screen === "issues" && (
           <IssuesScreen
+            issues={issuesList}
             onBack={() => setScreen("profile")}
             onReportIssue={() => openReportIssue("issues")}
             onSelectIssue={(issue) => openIssueDetail(issue, "issues")}
@@ -347,8 +379,10 @@ export default function App() {
             category={issueCategory}
             subject={issueSubject}
             description={issueDescription}
+            attachment={issueAttachment}
             onSubjectChange={setIssueSubject}
             onDescriptionChange={setIssueDescription}
+            onAttachmentChange={setIssueAttachment}
             onNext={() => setScreen("report-issue-3")}
             onBack={() => setScreen("report-issue-1")}
             onChangeCategory={() => setScreen("report-issue-1")}
@@ -360,6 +394,7 @@ export default function App() {
             category={issueCategory}
             subject={issueSubject}
             description={issueDescription}
+            attachment={issueAttachment}
             onEdit={() => setScreen("report-issue-2")}
             onChangeCategory={() => setScreen("report-issue-1")}
             onSubmit={handleSubmitIssue}
