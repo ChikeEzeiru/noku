@@ -193,7 +193,7 @@ export default function AddPaymentMethod({ onBack, onAddCard, onBankTransfer, on
       <div className="shrink-0 px-6 pb-10 pt-4">
         <button
           onClick={handleContinue}
-          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1"
+          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1 btn-press-cta"
           style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)" }}
         >
           Continue

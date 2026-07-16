@@ -78,7 +78,7 @@ export default function BottomNav({ activeTab, onNavigate }: BottomNavProps) {
             <button
               key={id}
               onClick={() => onNavigate(id)}
-              className="flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-[16px]"
+              className="flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-[16px] btn-press-nav"
               style={{ color: "#abab9c" }}
             >
               {icon}

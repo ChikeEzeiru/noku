@@ -46,7 +46,7 @@ export default function RegistrationConfirmation({
     <div className="h-[calc(100vh-44px)] bg-noku-bg flex flex-col">
       <div className="flex-1 overflow-y-auto flex flex-col gap-12 px-6 pt-6">
         {/* Illustration */}
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center animate-[successPop_300ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_both]">
           <Image
             src="/Images/Noku Logo Vector.svg"
             alt=""
@@ -59,7 +59,7 @@ export default function RegistrationConfirmation({
         {/* Content */}
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
-            <p className="text-[24px] font-semibold text-noku-heading leading-8 tracking-[-0.48px]">
+            <p className="text-[24px] font-semibold text-noku-heading leading-8 tracking-[-0.48px] animate-[fadeSlideUp_200ms_cubic-bezier(0.23,1,0.32,1)_160ms_both]">
               You&apos;re all set,{" "}
               <span className="text-noku-text-dim">{firstName}</span>
             </p>

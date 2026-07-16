@@ -244,7 +244,7 @@ export default function ReportIssue2({
         <button
           onClick={onNext}
           disabled={!canProceed}
-          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1 disabled:opacity-50"
+          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1 disabled:opacity-50 btn-press-cta"
           style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)" }}
         >
           Next

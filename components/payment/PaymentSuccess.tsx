@@ -42,12 +42,12 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
           {/* Success icon */}
           <div className="flex flex-col items-center gap-4">
             <div
-              className="w-10 h-10 rounded-lg bg-noku-success flex items-center justify-center"
+              className="w-10 h-10 rounded-lg bg-noku-success flex items-center justify-center animate-[successPop_300ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_both]"
               style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
             >
               <CheckCircleIcon />
             </div>
-            <p className="text-base font-medium text-noku-heading">Payment Successful!</p>
+            <p className="text-base font-medium text-noku-heading animate-[fadeSlideUp_200ms_cubic-bezier(0.23,1,0.32,1)_160ms_both]">Payment Successful!</p>
           </div>
 
           {/* Payment summary */}
@@ -94,7 +94,7 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
       <div className="shrink-0 px-6 pb-10">
         <button
           onClick={onViewReceipt}
-          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1"
+          className="w-full bg-noku-brand-mid text-white rounded-lg py-2.5 text-sm font-semibold flex items-center justify-center gap-1 btn-press-cta"
           style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)" }}
         >
           View Receipt

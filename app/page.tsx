@@ -104,6 +104,7 @@ export default function App() {
   const [issueAttachment, setIssueAttachment] = useState<File | null>(null);
   const [issuesList, setIssuesList] = useState<Issue[]>(seedIssues);
   const [showIssueToast, setShowIssueToast] = useState(false);
+  const [isToastExiting, setIsToastExiting] = useState(false);
 
   const CATEGORY_DOT_COLORS: Record<string, string> = {
     "Billing":        "#f97316",
@@ -145,7 +146,12 @@ export default function App() {
     const dest: AppState = reportReturn === "issues" ? "issues" : hasPaid ? "home-paid" : "home-unpaid";
     setScreen(dest);
     setShowIssueToast(true);
-    setTimeout(() => setShowIssueToast(false), 4000);
+    setTimeout(() => dismissToast(), 3800);
+  }
+
+  function dismissToast() {
+    setIsToastExiting(true);
+    setTimeout(() => { setShowIssueToast(false); setIsToastExiting(false); }, 200);
   }
   const [receiptPayment, setReceiptPayment] = useState<PaymentRecord | null>(null);
 
@@ -190,6 +196,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex justify-center bg-noku-card">
       <div className="w-full max-w-app bg-noku-bg min-h-screen relative overflow-hidden pt-11">
+        <div key={screen} className="screen-enter">
         {screen === "splash" && (
           <SplashScreen onDone={() => setScreen("start")} />
         )}
@@ -425,12 +432,14 @@ export default function App() {
           />
         )}
 
+        </div>
+
         <StatusBar />
         <HomeIndicator />
 
         {/* Issue reported toast */}
         {showIssueToast && (
-          <div className="absolute top-4 left-4 right-4 z-50 animate-[fadeSlideIn_0.25s_ease-out]">
+          <div className={`absolute top-4 left-4 right-4 z-50 ${isToastExiting ? "animate-[fadeSlideOut_200ms_cubic-bezier(0.23,1,0.32,1)_forwards]" : "animate-[fadeSlideIn_0.25s_ease-out]"}`}>
             <div
               className="bg-white border border-noku-border-primary rounded-xl p-4 flex flex-col gap-1.5"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
@@ -438,7 +447,7 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <p className="text-xs font-medium text-noku-text-mid">Issue reported</p>
                 <button
-                  onClick={() => setShowIssueToast(false)}
+                  onClick={dismissToast}
                   className="text-noku-text-dim p-0.5"
                 >
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
