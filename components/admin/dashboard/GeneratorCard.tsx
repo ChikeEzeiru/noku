@@ -1,6 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useEstateStore } from "@/store/estateStore";
+import type { TimeValue } from "@/components/admin-onboarding/Step4";
+
+function formatTime(t: TimeValue | null | undefined): string {
+  if (!t) return "—";
+  return `${t.hour}:${t.minute} ${t.period}`;
+}
 
 type GeneratorStatus = "normal" | "off" | "rationed" | "under_repair";
 
@@ -19,12 +26,17 @@ export default function GeneratorCard({
   status?: GeneratorStatus;
 }) {
   const { image, label } = statusConfig[status];
+  const generator = useEstateStore((s) => s.generator);
+
+  const timeLabel = generator
+    ? `${formatTime(generator.startTime)} – ${formatTime(generator.endTime)}`
+    : "7:00PM – 2:00AM";
 
   return (
     <div className={`bg-white border border-[#e5e5e5] rounded-xl overflow-hidden flex flex-col ${className}`} style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
       {/* Time header */}
       <div className="px-6 pt-5 pb-4 border-b border-[#e5e5e5]">
-        <p className="text-sm text-[#525252]">7:00PM – 2:00AM</p>
+        <p className="text-sm text-[#525252]">{timeLabel}</p>
       </div>
 
       {/* Image + status */}

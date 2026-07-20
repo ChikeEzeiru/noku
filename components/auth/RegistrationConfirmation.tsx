@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEstateStore } from "@/store/estateStore";
 
 type RegistrationConfirmationProps = {
   name: string;
@@ -11,7 +12,7 @@ type RegistrationConfirmationProps = {
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex gap-2 items-start">
+    <div className="flex gap-2 items-center">
       <svg
         width="18"
         height="18"
@@ -21,7 +22,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
         strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="shrink-0 mt-0.5"
+        className="shrink-0"
       >
         <circle cx="9" cy="9" r="7.5" />
         <path d="M9 8.25V11.25M9 6h.008" />
@@ -40,7 +41,28 @@ export default function RegistrationConfirmation({
   apartmentType,
   onContinue,
 }: RegistrationConfirmationProps) {
+  const structure = useEstateStore((s) => s.structure);
+  const residents = useEstateStore((s) => s.residents);
+
   const firstName = name.split(" ")[0] || "there";
+
+  let buildingUnit = "—";
+  let resAcUnits   = "—";
+  if (structure && residents.length > 0) {
+    let slotIndex = 0;
+    outerLoop: for (let bi = 0; bi < structure.buildingNames.length; bi++) {
+      const count = structure.aptCounts[bi] ?? 0;
+      for (let u = 1; u <= count; u++) {
+        const stored = residents[slotIndex];
+        if (stored?.name?.trim().toLowerCase() === name.trim().toLowerCase()) {
+          buildingUnit = `Building ${structure.buildingNames[bi]}, ${structure.aptNaming} ${u}`;
+          resAcUnits   = stored.acUnits || "—";
+          break outerLoop;
+        }
+        slotIndex++;
+      }
+    }
+  }
 
   return (
     <div className="h-[calc(100vh-44px)] bg-noku-bg flex flex-col">
@@ -50,9 +72,9 @@ export default function RegistrationConfirmation({
           <Image
             src="/Images/Noku Logo Vector.svg"
             alt=""
-            width={200}
-            height={200}
-            className="w-50 h-50 object-contain"
+            width={240}
+            height={240}
+            className="w-[240px] h-[240px] object-contain"
           />
         </div>
 
@@ -69,13 +91,10 @@ export default function RegistrationConfirmation({
           </div>
 
           <div className="flex flex-col gap-4">
-            <InfoRow
-              label="Your unit:"
-              value="Building B, Unit 4 (First Floor)"
-            />
+            <InfoRow label="Your unit:" value={buildingUnit} />
             <InfoRow label="Occupants:" value={String(occupants)} />
             <InfoRow label="Apartment type:" value={apartmentType} />
-            <InfoRow label="AC units" value="4" />
+            <InfoRow label="AC units" value={resAcUnits} />
           </div>
 
           <p className="text-xs font-normal leading-[18px] text-noku-text-dim">
@@ -88,11 +107,11 @@ export default function RegistrationConfirmation({
       <div className="shrink-0 px-6 pb-10 pt-4 flex justify-end">
         <button
           onClick={onContinue}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white text-sm font-semibold"
+          className="flex items-center gap-1 pl-4 pr-3 py-2.5 rounded-xl text-white text-sm font-semibold"
           style={{
             backgroundColor: "#17a248",
             boxShadow:
-              "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
+              "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05)",
           }}
         >
           Continue to Home

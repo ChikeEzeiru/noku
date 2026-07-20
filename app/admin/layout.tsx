@@ -96,23 +96,6 @@ function AnnouncementIcon({ active }: { active: boolean }) {
   );
 }
 
-function CommitteeIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke={active ? "#5B5B4B" : "#ABAB9C"}
-      strokeWidth={active ? "1.6" : "1.39"}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="10" cy="6.667" r="3.333" />
-      <path d="M3.333 17.5c0-3.682 2.985-6.667 6.667-6.667s6.667 2.985 6.667 6.667" />
-    </svg>
-  );
-}
 
 function SettingsIcon({ active }: { active: boolean }) {
   return (
@@ -142,7 +125,6 @@ const generalNavItems = [
     href: "/admin/announcements",
     icon: AnnouncementIcon,
   },
-  { label: "Committee", href: "/admin/committee", icon: CommitteeIcon },
 ];
 
 const settingsNavItems = [

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import CollectionDataCard from "@/components/admin/payments/CollectionDataCard";
 import QuickActionsCard from "@/components/admin/payments/QuickActionsCard";
 import ReceivedPaymentsTable from "@/components/admin/payments/ReceivedPaymentsTable";
+import { MonthPicker, formatMonth, type MonthValue } from "@/components/admin/shared/MonthPicker";
 
 function CalendarIcon() {
   return (
@@ -14,26 +16,39 @@ function CalendarIcon() {
 }
 
 export default function AdminPayments() {
+  const [selectedMonth, setSelectedMonth] = useState<MonthValue>({ year: 2026, month: 6 });
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-6">
       {/* Page header */}
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-noku-heading tracking-tight">Payments</h1>
-        <button
-          className="flex items-center gap-2 text-sm font-medium text-[#404040] border border-[#e5e5e5] rounded-lg px-3 py-2 bg-white"
-          style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
-        >
-          <CalendarIcon />
-          Jun 2026
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setPickerOpen((v) => !v)}
+            className="flex items-center gap-2 text-sm font-medium text-[#404040] border border-[#e5e5e5] rounded-lg px-3 py-2 bg-white"
+            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
+          >
+            <CalendarIcon />
+            {formatMonth(selectedMonth)}
+          </button>
+          {pickerOpen && (
+            <MonthPicker
+              selected={selectedMonth}
+              onSelect={setSelectedMonth}
+              onClose={() => setPickerOpen(false)}
+            />
+          )}
+        </div>
       </div>
 
       {/* Row 1: Collection Data + Quick Actions */}
-      <div className="flex flex-col xl:flex-row gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-stretch gap-4">
         <div className="flex-1 min-w-0">
-          <CollectionDataCard />
+          <CollectionDataCard month={selectedMonth.month} />
         </div>
-        <div className="xl:w-[400px] w-full shrink-0">
+        <div className="xl:w-100 w-full shrink-0">
           <QuickActionsCard />
         </div>
       </div>

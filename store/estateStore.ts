@@ -1,0 +1,81 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { EstateStructure } from "@/components/admin-onboarding/Step3";
+import type { TimeValue } from "@/components/admin-onboarding/Step4";
+import type { BillingSettings } from "@/components/admin-onboarding/Step6";
+import type { Resident } from "@/components/admin-onboarding/Step7";
+import type { CommitteeMember } from "@/components/admin-onboarding/Step8";
+
+export type AdminProfile = {
+  fullName: string;
+  phone: string;
+  email: string;
+  role: string;
+};
+
+export type EstateInfo = {
+  estateName: string;
+  address: string;
+  city: string;
+  state: string;
+};
+
+export type GeneratorSchedule = {
+  startTime: TimeValue | null;
+  endTime: TimeValue | null;
+  weekendSchedule: boolean;
+  weekendStart: TimeValue | null;
+  weekendEnd: TimeValue | null;
+  generatorType: string;
+};
+
+export type FormulaWeights = {
+  occupants: number;
+  bedrooms: number;
+  acUnits: number;
+};
+
+type EstateState = {
+  admin:     AdminProfile | null;
+  estate:    EstateInfo | null;
+  structure: EstateStructure | null;
+  generator: GeneratorSchedule | null;
+  formula:   FormulaWeights | null;
+  billing:   BillingSettings | null;
+  residents: Resident[];
+  committee: CommitteeMember[];
+
+  setAdmin:     (v: AdminProfile) => void;
+  setEstate:    (v: EstateInfo) => void;
+  setStructure: (v: EstateStructure) => void;
+  setGenerator: (v: GeneratorSchedule) => void;
+  setFormula:   (v: FormulaWeights) => void;
+  setBilling:   (v: BillingSettings) => void;
+  setResidents: (v: Resident[]) => void;
+  setCommittee: (v: CommitteeMember[]) => void;
+};
+
+export const useEstateStore = create<EstateState>()(
+  persist(
+    (set) => ({
+      admin:     null,
+      estate:    null,
+      structure: null,
+      generator: null,
+      formula:   null,
+      billing:   null,
+      residents: [],
+      committee: [],
+
+      setAdmin:     (v) => set({ admin: v }),
+      setEstate:    (v) => set({ estate: v }),
+      setStructure: (v) => set({ structure: v }),
+      setGenerator: (v) => set({ generator: v }),
+      setFormula:   (v) => set({ formula: v }),
+      setBilling:   (v) => set({ billing: v }),
+      setResidents: (v) => set({ residents: v }),
+      setCommittee: (v) => set({ committee: v }),
+    }),
+    { name: "noku-estate" }
+  )
+);
