@@ -3,7 +3,7 @@
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 import type { PaymentRecord } from "@/types/payment";
 
-const visaImg = "/images/Payment-method-icon.svg";
+const visaImg = "/Images/Payment-method-icon.svg";
 
 function ArrowRightIcon() {
   return (

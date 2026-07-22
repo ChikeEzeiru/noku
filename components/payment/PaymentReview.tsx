@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const visaImg = "/images/Payment-method-icon.svg";
+const visaImg = "/Images/Payment-method-icon.svg";
 const PAYSTACK_PUBLIC_KEY = "pk_test_c323421ff89e0e03b05fb36fd92aea1fb37042d9";
 
 declare global {

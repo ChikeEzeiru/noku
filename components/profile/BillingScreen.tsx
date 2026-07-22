@@ -1,6 +1,6 @@
 "use client";
 
-const visaImg = "/images/Payment-method-icon.svg";
+const visaImg = "/Images/Payment-method-icon.svg";
 
 function Toggle({ on }: { on: boolean }) {
   return (

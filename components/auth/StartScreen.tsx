@@ -34,7 +34,7 @@ export default function StartScreen({ onRegister, onSignIn }: StartScreenProps) 
       {/* Top content */}
       <div className="relative z-10 px-6 pt-6 flex flex-col gap-3">
         <Image
-          src="/images/Noku Full logo.svg"
+          src="/Images/Noku Full logo.svg"
           alt="Noku"
           width={69} // actual width from SVG file
           height={20} // actual height from SVG file

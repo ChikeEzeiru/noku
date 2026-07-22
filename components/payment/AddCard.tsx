@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const visaLogoOnCard = "/images/Payment-method-icon.svg";
+const visaLogoOnCard = "/Images/Payment-method-icon.svg";
 
 function PaypassIcon() {
   return (

@@ -2,7 +2,7 @@
 
 import BottomNav, { NavTab } from "@/components/shared/BottomNav";
 
-const houseImg = "/images/profile-house.jpg";
+const houseImg = "/Images/profile-house.jpg";
 
 function ChevronRightIcon() {
   return (

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const visaCardIcon = "/images/Payment-method-icon.svg";
+const visaCardIcon = "/Images/Payment-method-icon.svg";
 
 function CreditCardPlusIcon() {
   return (
