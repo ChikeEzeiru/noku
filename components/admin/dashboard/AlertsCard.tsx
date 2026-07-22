@@ -57,7 +57,7 @@ export default function AlertsCard() {
             <p className="text-sm font-medium text-[#404040]">Flagged issues:</p>
             <p className="text-sm text-[#525252] text-pretty">4 residents have flagged issues that are yet to be resolved</p>
           </div>
-          <Link href="/admin/residents" className={BTN_CLASS} style={{ boxShadow: BTN_SHADOW }}>
+          <Link href="/admin/issues" className={BTN_CLASS} style={{ boxShadow: BTN_SHADOW }}>
             View Issues
           </Link>
         </div>
