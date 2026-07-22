@@ -193,10 +193,13 @@ export default function App() {
 
   const homeIsPaid = hasPaid || screen === "home-paid";
 
+  const TAB_SCREENS = new Set(["home-unpaid", "home-paid", "fund", "payments", "updates", "profile"]);
+  const animationKey = TAB_SCREENS.has(screen) ? "tab" : screen;
+
   return (
     <div className="min-h-screen flex justify-center bg-noku-card">
       <div className="w-full max-w-app bg-noku-bg min-h-screen relative overflow-hidden pt-11">
-        <div key={screen} className="screen-enter">
+        <div key={animationKey} className="screen-enter">
         {screen === "splash" && (
           <SplashScreen onDone={() => setScreen("start")} />
         )}
