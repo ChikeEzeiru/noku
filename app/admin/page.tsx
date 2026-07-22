@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useEstateStore } from "@/store/estateStore";
 import { MonthPicker, formatMonth, type MonthValue } from "@/components/admin/shared/MonthPicker";
 import StatCard from "@/components/admin/dashboard/StatCard";
@@ -9,6 +9,9 @@ import AlertsCard from "@/components/admin/dashboard/AlertsCard";
 import QuickActionsCard from "@/components/admin/dashboard/QuickActionsCard";
 import GeneratorCard from "@/components/admin/dashboard/GeneratorCard";
 import RecentActivityCard from "@/components/admin/dashboard/RecentActivityCard";
+import SendReminderModal from "@/components/admin/payments/SendReminderModal";
+import LogExpenseModal from "@/components/admin/fuel/LogExpenseModal";
+import CreateAnnouncementModal from "@/components/admin/announcements/CreateAnnouncementModal";
 
 const periods = ["12 months", "30 days", "7 days", "24 hours"] as const;
 type Period = (typeof periods)[number];
@@ -43,6 +46,23 @@ function buildTooltips(period: Period, monthLabel: string, isCurrent: boolean): 
     balance:   "Current available fund balance after all expenditures",
     runway:    "Estimated days of generator power remaining at the current spend rate",
   };
+}
+
+function runwayColor(runway: string): string {
+  const days = parseInt(runway, 10);
+  if (isNaN(days)) return "text-noku-heading";
+  if (days <= 3) return "text-noku-red";
+  if (days <= 7) return "text-noku-amber";
+  return "text-noku-green";
+}
+
+function CheckCircleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="9" r="7.25" />
+      <path d="M6 9l2 2 4-4" />
+    </svg>
+  );
 }
 
 function CalendarIcon() {
@@ -104,6 +124,26 @@ export default function AdminDashboard() {
   const firstName = admin?.fullName?.split(" ")[0] ?? "Admin";
   const [selectedMonth, setSelectedMonth] = useState<MonthValue>({ year: 2026, month: 6 });
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [reminderOpen,      setReminderOpen]      = useState(false);
+  const [logExpenseOpen,    setLogExpenseOpen]    = useState(false);
+  const [announcementOpen,  setAnnouncementOpen]  = useState(false);
+  const [toastMsg,        setToastMsg]        = useState<string | null>(null);
+  const [isToastExiting,  setIsToastExiting]  = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function showToast(msg: string) {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setIsToastExiting(false);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => dismissToast(), 3300);
+  }
+
+  function dismissToast() {
+    setIsToastExiting(true);
+    setTimeout(() => { setToastMsg(null); setIsToastExiting(false); }, 200);
+  }
+
+  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
 
   const isPastMonth = selectedMonth.month < CURRENT_MONTH || selectedMonth.year < 2026;
   const monthLabel  = formatMonth(selectedMonth);
@@ -198,6 +238,7 @@ export default function AdminDashboard() {
           value={stats.runway}
           subtitle="days of power remaining"
           tooltip={tooltips.runway}
+          valueClassName={runwayColor(stats.runway)}
         />
       </div>
 
@@ -215,12 +256,56 @@ export default function AdminDashboard() {
       <div className="flex flex-col xl:flex-row gap-4">
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           <AlertsCard />
-          <QuickActionsCard />
+          <QuickActionsCard
+            onSendReminder={() => setReminderOpen(true)}
+            onLogExpense={() => setLogExpenseOpen(true)}
+            onNewAnnouncement={() => setAnnouncementOpen(true)}
+          />
         </div>
         <div className="xl:w-100 w-full shrink-0 flex">
           <RecentActivityCard className="flex-1" />
         </div>
       </div>
+      {/* Bulk reminder modal (opened from Quick Actions) */}
+      <SendReminderModal
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+        onSent={(count, residentName) => {
+          const firstName = residentName && residentName !== "—" ? residentName.split(" ")[0] : null;
+          showToast(count === 1 && firstName
+            ? `Reminder sent to ${firstName}`
+            : `Reminders sent to ${count} resident${count !== 1 ? "s" : ""}`);
+        }}
+      />
+
+      {/* Create Announcement modal */}
+      <CreateAnnouncementModal
+        open={announcementOpen}
+        onClose={() => setAnnouncementOpen(false)}
+        onSubmit={() => {
+          showToast("Announcement sent to all residents");
+        }}
+      />
+
+      {/* Log Expense modal */}
+      <LogExpenseModal
+        open={logExpenseOpen}
+        onClose={() => setLogExpenseOpen(false)}
+        onSubmit={(entry) => {
+          showToast(entry.type === "fuel" ? "Fuel purchase logged" : "Generator expense logged");
+        }}
+      />
+
+      {/* Success toast */}
+      {toastMsg && (
+        <div
+          className={`fixed bottom-6 right-6 z-[60] flex items-center gap-2.5 text-sm font-medium text-white rounded-[10px] px-4 py-3 toast-enter${isToastExiting ? " animate-[toastOut_200ms_cubic-bezier(0.23,1,0.32,1)_forwards]" : ""}`}
+          style={{ background: "#2b2b22", boxShadow: "0 4px 12px rgba(0,0,0,0.18)" }}
+        >
+          <CheckCircleIcon />
+          {toastMsg}
+        </div>
+      )}
     </div>
   );
 }

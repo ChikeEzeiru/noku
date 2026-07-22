@@ -5,6 +5,9 @@ import ResidentStatCards from "@/components/admin/residents/ResidentStatCards";
 import ReportedIssuesCard from "@/components/admin/residents/ReportedIssuesCard";
 import RecalculateCard from "@/components/admin/residents/RecalculateCard";
 import AllResidentsTable from "@/components/admin/residents/AllResidentsTable";
+import ResidentDetailDrawer, { type ResidentDrawerRow } from "@/components/admin/residents/ResidentDetailDrawer";
+import IssueDetailDrawer from "@/components/admin/residents/IssueDetailDrawer";
+import type { ReportedIssue } from "@/components/admin/residents/issuesData";
 import { MonthPicker, formatMonth, type MonthValue } from "@/components/admin/shared/MonthPicker";
 
 function CalendarIcon() {
@@ -19,6 +22,8 @@ function CalendarIcon() {
 export default function AdminResidents() {
   const [selectedMonth, setSelectedMonth] = useState<MonthValue>({ year: 2026, month: 6 });
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [drawerRow, setDrawerRow] = useState<ResidentDrawerRow | null>(null);
+  const [issueDrawer, setIssueDrawer] = useState<ReportedIssue | null>(null);
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,7 +55,7 @@ export default function AdminResidents() {
       {/* Reported Issues + Recalculate */}
       <div className="flex flex-col xl:flex-row gap-4 xl:items-stretch">
         <div className="flex-1 min-w-0">
-          <ReportedIssuesCard />
+          <ReportedIssuesCard onIssueClick={setIssueDrawer} />
         </div>
         <div className="xl:w-[400px] w-full shrink-0">
           <RecalculateCard />
@@ -58,7 +63,13 @@ export default function AdminResidents() {
       </div>
 
       {/* All residents table */}
-      <AllResidentsTable />
+      <AllResidentsTable onRowClick={setDrawerRow} />
+
+      {/* Resident detail drawer */}
+      <ResidentDetailDrawer row={drawerRow} onClose={() => setDrawerRow(null)} />
+
+      {/* Issue detail drawer */}
+      <IssueDetailDrawer issue={issueDrawer} onClose={() => setIssueDrawer(null)} />
     </div>
   );
 }

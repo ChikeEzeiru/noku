@@ -133,8 +133,8 @@ export default function AddPaymentMethod({ onBack, onAddCard, onBankTransfer, on
           >
             <div className="flex flex-1 gap-3 items-center">
               <div
-                className="w-10 h-10 rounded border border-noku-border-primary bg-white flex items-center justify-center shrink-0"
-                style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
+                className="w-10 h-10 rounded-lg border border-noku-border-primary flex items-center justify-center shrink-0"
+                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
               >
                 <CreditCardPlusIcon />
               </div>
@@ -166,8 +166,8 @@ export default function AddPaymentMethod({ onBack, onAddCard, onBankTransfer, on
           >
             <div className="flex flex-1 gap-3 items-center">
               <div
-                className="w-10 h-10 rounded border border-noku-border-primary bg-white flex items-center justify-center shrink-0"
-                style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
+                className="w-10 h-10 rounded-lg border border-noku-border-primary flex items-center justify-center shrink-0"
+                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
               >
                 <BuildingIcon />
               </div>

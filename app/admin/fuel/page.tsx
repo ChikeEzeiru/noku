@@ -1,11 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import StatCard from "@/components/admin/dashboard/StatCard";
 import RunwayChart from "@/components/admin/fuel/RunwayChart";
 import ReconciliationCard from "@/components/admin/fuel/ReconciliationCard";
 import SpendHistoryTable from "@/components/admin/fuel/SpendHistoryTable";
+import SpendHistoryDrawer, { type ExpenseEntry } from "@/components/admin/fuel/SpendHistoryDrawer";
+import LogExpenseModal from "@/components/admin/fuel/LogExpenseModal";
+import { useEstateStore } from "@/store/estateStore";
 import { MonthPicker, formatMonth, type MonthValue } from "@/components/admin/shared/MonthPicker";
+
+function CheckCircleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="9" r="7.25" />
+      <path d="M6 9l2 2 4-4" />
+    </svg>
+  );
+}
 
 function CalendarIcon() {
   return (
@@ -24,14 +36,53 @@ function TagIcon() {
   );
 }
 
+function runwayColor(runway: string): string {
+  const days = parseInt(runway, 10);
+  if (isNaN(days)) return "text-noku-heading";
+  if (days <= 3) return "text-noku-red";
+  if (days <= 7) return "text-noku-amber";
+  return "text-noku-green";
+}
+
 const FUEL_STATS: Record<number, { estimate: string; actual: string; variance: string; varianceSub: string; runway: string }> = {
   6: { estimate: "₦2.47m", actual: "₦2.24m", variance: "₦60k",  varianceSub: "under budget (2.5%)",  runway: "3 days" },
   5: { estimate: "₦2.47m", actual: "₦2.51m", variance: "₦40k",  varianceSub: "over budget (-1.6%)",  runway: "3 days" },
 };
 
 export default function AdminFuel() {
-  const [selectedMonth, setSelectedMonth] = useState<MonthValue>({ year: 2026, month: 6 });
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const adminName = useEstateStore((s) => s.admin?.fullName ?? "Admin");
+
+  const [selectedMonth,   setSelectedMonth]   = useState<MonthValue>({ year: 2026, month: 6 });
+  const [pickerOpen,      setPickerOpen]      = useState(false);
+  const [drawerEntry,     setDrawerEntry]     = useState<ExpenseEntry | null>(null);
+  const [logModalOpen,    setLogModalOpen]    = useState(false);
+  const [toastMsg,        setToastMsg]        = useState<string | null>(null);
+  const [isToastExiting,  setIsToastExiting]  = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function showToast(msg: string) {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setIsToastExiting(false);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => dismissToast(), 3300);
+  }
+
+  function dismissToast() {
+    setIsToastExiting(true);
+    setTimeout(() => { setToastMsg(null); setIsToastExiting(false); }, 200);
+  }
+
+  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
+  const [entries, setEntries] = useState<ExpenseEntry[]>(() => [
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,233", total: "₦616,500", supplier: "ABC Fuel Services", method: "In app",   loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,315", total: "₦657,500", supplier: "ABC Fuel Services", method: "In app",   loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,315", total: "₦657,500", supplier: "ABC Fuel Services", method: "In app",   loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,315", total: "₦657,500", supplier: "ABC Fuel Services", method: "Transfer", loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,315", total: "₦657,500", supplier: "EcoFuel Solutions", method: "In app",   loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,315", total: "₦657,500", supplier: "ABC Fuel Services", method: "Transfer", loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,290", total: "₦645,000", supplier: "ABC Fuel Services", method: "Transfer", loggedBy: adminName },
+    { type: "fuel", date: "Jun 15, 2026", qty: 500, unitPrice: "₦1,290", total: "₦645,000", supplier: "EcoFuel Solutions", method: "Transfer", loggedBy: adminName },
+  ]);
 
   const fuel = FUEL_STATS[selectedMonth.month] ?? FUEL_STATS[6];
 
@@ -59,6 +110,7 @@ export default function AdminFuel() {
             )}
           </div>
           <button
+            onClick={() => setLogModalOpen(true)}
             className="flex items-center gap-2 text-sm font-semibold text-white rounded-lg px-4 py-2"
             style={{
               backgroundColor: "#1D1D16",
@@ -66,7 +118,7 @@ export default function AdminFuel() {
             }}
           >
             <TagIcon />
-            Log a purchase
+            Log an Expense
           </button>
         </div>
       </div>
@@ -96,12 +148,12 @@ export default function AdminFuel() {
           value={fuel.runway}
           subtitle="days of power remaining"
           tooltip="Estimated days of power at current spend rate"
-          valueClassName="text-noku-green"
+          valueClassName={runwayColor(fuel.runway)}
         />
       </div>
 
       {/* Runway chart + Reconciliation */}
-      <div className="flex flex-col xl:flex-row gap-4">
+      <div className="flex flex-col xl:flex-row gap-4 xl:h-[384px]">
         <div className="flex-1 min-w-0">
           <RunwayChart />
         </div>
@@ -111,7 +163,31 @@ export default function AdminFuel() {
       </div>
 
       {/* Spend history table */}
-      <SpendHistoryTable />
+      <SpendHistoryTable entries={entries} onRowClick={setDrawerEntry} />
+
+      {/* Expense detail drawer */}
+      <SpendHistoryDrawer entry={drawerEntry} onClose={() => setDrawerEntry(null)} />
+
+      {/* Success toast */}
+      {toastMsg && (
+        <div
+          className={`fixed bottom-6 right-6 z-[60] flex items-center gap-2.5 text-sm font-medium text-white rounded-[10px] px-4 py-3 toast-enter${isToastExiting ? " animate-[toastOut_200ms_cubic-bezier(0.23,1,0.32,1)_forwards]" : ""}`}
+          style={{ background: "#2b2b22", boxShadow: "0 4px 12px rgba(0,0,0,0.18)" }}
+        >
+          <CheckCircleIcon />
+          {toastMsg}
+        </div>
+      )}
+
+      {/* Log Expense modal */}
+      <LogExpenseModal
+        open={logModalOpen}
+        onClose={() => setLogModalOpen(false)}
+        onSubmit={(entry) => {
+          setEntries((prev) => [entry, ...prev]);
+          showToast(entry.type === "fuel" ? "Fuel purchase logged" : "Generator expense logged");
+        }}
+      />
     </div>
   );
 }

@@ -220,8 +220,8 @@ function AddMemberModal({ onClose, onAdd }: { onClose: () => void; onAdd: (m: Co
         <div className="relative flex flex-col gap-4 px-6 pt-6 pb-5">
           {/* Featured icon */}
           <div
-            className="relative w-10 h-10 rounded-[8px] flex items-center justify-center bg-white border border-[#d4d4d4] shrink-0"
-            style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}
+            className="w-10 h-10 rounded-lg flex items-center justify-center border border-noku-border-primary shrink-0"
+            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#404040" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2.5" y="2.5" width="15" height="15" rx="2" />

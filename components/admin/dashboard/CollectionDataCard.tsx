@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function CreditCardCheck() {
   return (
     <svg width="20" height="20" opacity="0.8" viewBox="0 0 15 15" fill="none" stroke="#474739" strokeWidth="1.39" strokeLinecap="round" strokeLinejoin="round">
@@ -103,10 +105,10 @@ export default function CollectionDataCard({ className = "" }: { className?: str
 
       {/* Footer */}
       <div className="flex justify-end">
-        <button className="flex items-center gap-1.5 bg-white rounded-[8px] px-[14px] py-[10px] text-sm font-semibold text-[#474739]" style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}>
+        <Link href="/admin/payments" className="flex items-center gap-1.5 bg-white rounded-[8px] px-[14px] py-[10px] text-sm font-semibold text-[#474739]" style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}>
           View Details
           <ArrowRightIcon />
-        </button>
+        </Link>
       </div>
     </div>
   );

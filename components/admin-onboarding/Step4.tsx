@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useEstateStore } from "@/store/estateStore";
 import Image from "next/image";
+import { TimePicker, nextTimeSlot, isValidEnd } from "@/components/admin/shared/TimePicker";
+import type { TimeValue } from "@/components/admin/shared/TimePicker";
+export type { TimeValue } from "@/components/admin/shared/TimePicker";
 
 type Props = {
   onNext: () => void;
@@ -95,88 +98,6 @@ const inputCls = (err?: boolean) =>
 
 const inputShadow = { boxShadow: "0px 1px 1px rgba(0,0,0,0.05)" };
 
-/* ── TimePicker ─────────────────────────────────────────────── */
-
-const HOURS   = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
-const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
-
-export type TimeValue = { hour: string; minute: string; period: "AM" | "PM" };
-
-function TimePicker({
-  value,
-  onChange,
-}: {
-  value: TimeValue | null;
-  onChange: (v: TimeValue) => void;
-}) {
-  const selectCls =
-    "appearance-none bg-transparent border-none outline-none text-base text-[#171717] cursor-pointer flex-1 text-center";
-
-  const hour   = value?.hour   ?? "";
-  const minute = value?.minute ?? "";
-  const period = value?.period ?? "AM";
-
-  const update = (patch: Partial<TimeValue>) =>
-    onChange({ hour, minute, period, ...patch } as TimeValue);
-
-  const isFilled = !!value?.hour && !!value?.minute;
-
-  return (
-    <div
-      className="flex items-center gap-0 bg-white border rounded-[8px] overflow-hidden transition-colors"
-      style={{
-        ...inputShadow,
-        borderColor: isFilled ? "#d8d8d0" : "#d8d8d0",
-      }}
-    >
-      {/* Hour */}
-      <select
-        value={hour}
-        onChange={(e) => update({ hour: e.target.value })}
-        className={`${selectCls} pl-3 pr-1 py-[10px]`}
-        style={{ color: hour ? "#171717" : "#7c7c67" }}
-      >
-        <option value="" disabled>HH</option>
-        {HOURS.map((h) => (
-          <option key={h} value={h}>{h}</option>
-        ))}
-      </select>
-
-      <span className="text-[#d8d8d0] text-base select-none">:</span>
-
-      {/* Minute */}
-      <select
-        value={minute}
-        onChange={(e) => update({ minute: e.target.value })}
-        className={`${selectCls} pl-1 pr-1 py-[10px]`}
-        style={{ color: minute ? "#171717" : "#7c7c67" }}
-      >
-        <option value="" disabled>MM</option>
-        {MINUTES.map((m) => (
-          <option key={m} value={m}>{m}</option>
-        ))}
-      </select>
-
-      {/* AM/PM toggle */}
-      <div className="flex border-l border-[#e8e8e3] self-stretch">
-        {(["AM", "PM"] as const).map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => update({ period: p })}
-            className="px-2 text-xs font-semibold transition-colors self-stretch"
-            style={{
-              color:   period === p ? "#17a248" : "#737373",
-              background: period === p ? "#f0faf4" : "transparent",
-            }}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ── Component ──────────────────────────────────────────────── */
 
@@ -190,6 +111,20 @@ export default function AdminOnboardingStep4({ onNext, onBack }: Props) {
   const setGenerator = useEstateStore((s) => s.setGenerator);
 
   const isTimeComplete = (t: TimeValue | null) => !!(t?.hour && t?.minute);
+
+  useEffect(() => {
+    if (!isTimeComplete(startTime)) return;
+    if (!isTimeComplete(endTime) || !isValidEnd(startTime!, endTime!)) {
+      setEndTime(nextTimeSlot(startTime!));
+    }
+  }, [startTime]);
+
+  useEffect(() => {
+    if (!isTimeComplete(weekendStart)) return;
+    if (!isTimeComplete(weekendEnd) || !isValidEnd(weekendStart!, weekendEnd!)) {
+      setWeekendEnd(nextTimeSlot(weekendStart!));
+    }
+  }, [weekendStart]);
 
   const canProceed =
     isTimeComplete(startTime) &&
@@ -242,7 +177,7 @@ export default function AdminOnboardingStep4({ onNext, onBack }: Props) {
                 </div>
                 <div className="flex flex-col gap-[6px]">
                   <label className="text-sm font-medium text-[#474739]">End Time</label>
-                  <TimePicker value={endTime} onChange={setEndTime} />
+                  <TimePicker value={endTime} onChange={setEndTime} minTime={startTime ?? undefined} />
                 </div>
               </div>
 
@@ -267,7 +202,7 @@ export default function AdminOnboardingStep4({ onNext, onBack }: Props) {
                   </div>
                   <div className="flex flex-col gap-[6px]">
                     <label className="text-sm font-medium text-[#474739]">Weekend End</label>
-                    <TimePicker value={weekendEnd} onChange={setWeekendEnd} />
+                    <TimePicker value={weekendEnd} onChange={setWeekendEnd} minTime={weekendStart ?? undefined} />
                   </div>
                 </div>
               )}

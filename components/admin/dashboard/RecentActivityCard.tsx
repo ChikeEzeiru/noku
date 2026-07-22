@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function CreditCardCheckIcon() {
   return (
     <svg width="20" height="20" opacity="0.8" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.39" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +55,7 @@ export default function RecentActivityCard({ className = "" }: { className?: str
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e5e5]">
         <p className="text-base font-semibold text-noku-heading">Recent activity</p>
-        <button className="text-sm font-semibold text-noku-green">See More</button>
+        <Link href="/admin/activity" className="text-sm font-semibold text-noku-green hover:opacity-80 transition-opacity">See More</Link>
       </div>
 
       {/* Rows */}

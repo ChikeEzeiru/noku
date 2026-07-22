@@ -224,7 +224,7 @@ export default function AdminLayout({
           </button>
         </div>
         {sidebarOpen && (
-          <div className="px-4 pb-4 bg-noku-surface border-b border-noku-rule">
+          <div className="px-4 pb-4 bg-noku-surface border-b border-noku-rule sidebar-enter">
             <p className={`${sectionLabel} pt-2`}>GENERAL</p>
             <nav className="flex flex-col mt-1">
               <NavItems
@@ -249,7 +249,7 @@ export default function AdminLayout({
 
       {/* Main content */}
       <main className="flex-1 lg:ml-69 min-h-screen bg-noku-card lg:pt-1 lg:pl-1">
-        <div className="bg-white min-h-screen lg:rounded-tl-[12px] lg:border lg:border-noku-rule mt-14 lg:mt-0 p-6 lg:p-8">
+        <div className="bg-white min-h-screen lg:rounded-tl-[12px] lg:border lg:border-noku-rule mt-14 lg:mt-0 p-6 lg:p-8 screen-enter w-full max-w-full">
           {children}
         </div>
       </main>

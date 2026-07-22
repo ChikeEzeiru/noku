@@ -1,3 +1,9 @@
+"use client";
+
+import Link from "next/link";
+import type { IssueBadgeType, ReportedIssue } from "@/components/admin/residents/issuesData";
+import { issues } from "@/components/admin/residents/issuesData";
+
 function AlertCircleIcon() {
   return (
     <svg
@@ -16,58 +22,32 @@ function AlertCircleIcon() {
   );
 }
 
-type IssueBadgeType = "Power Issue" | "Bill Issue" | "Payment Issue";
+const TYPE_DOT: Record<IssueBadgeType, string> = {
+  "Power Issue":   "#f59e0b",
+  "Bill Issue":    "#ef4444",
+  "Payment Issue": "#3b82f6",
+};
 
 function IssueBadge({ type }: { type: IssueBadgeType }) {
-  const styles: Record<IssueBadgeType, string> = {
-    "Power Issue": "border-[#93c5fd] text-[#1d4ed8] bg-[#eff6ff]",
-    "Bill Issue": "border-[#fcd34d] text-[#92400e] bg-[#fffbeb]",
-    "Payment Issue": "border-[#93c5fd] text-[#1d4ed8] bg-[#eff6ff]",
-  };
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap ${styles[type]}`}
+      className="inline-flex items-center gap-1 bg-white border border-[#d4d4d4] rounded-[6px] px-2 py-1 whitespace-nowrap shrink-0"
+      style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
     >
-      {type}
+      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: TYPE_DOT[type] }} />
+      <span className="text-[12px] font-medium text-[#404040] leading-4">{type}</span>
     </span>
   );
 }
 
-const issues = [
-  {
-    building: "Building C, Unit 6",
-    resident: "Aminu Eze",
-    preview: "Power outage in my unit....",
-    type: "Power Issue" as IssueBadgeType,
-    date: "Jun 27",
-  },
-  {
-    building: "Building D, Unit 3",
-    resident: "Tunde Okafor",
-    preview: "My bill seems too high for...",
-    type: "Bill Issue" as IssueBadgeType,
-    date: "Jun 24",
-  },
-  {
-    building: "Building B, Unit 4",
-    resident: "Ciroma Adekunle",
-    preview: "I've been unable to make p...",
-    type: "Payment Issue" as IssueBadgeType,
-    date: "Jun 12",
-  },
-  {
-    building: "Building C, Unit 3",
-    resident: "Obinna Amos",
-    preview: "Power outage in my unit....",
-    type: "Power Issue" as IssueBadgeType,
-    date: "Jun 8",
-  },
-];
+type Props = {
+  onIssueClick?: (issue: ReportedIssue) => void;
+};
 
-export default function ReportedIssuesCard() {
+export default function ReportedIssuesCard({ onIssueClick }: Props) {
   return (
     <div
-      className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden h-full flex flex-col"
+      className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden h-full flex flex-col w-full min-w-0"
       style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
     >
       {/* Header */}
@@ -75,7 +55,7 @@ export default function ReportedIssuesCard() {
         <p className="text-base font-semibold text-noku-heading">
           Reported Issues
         </p>
-        <button className="flex items-center gap-1 text-sm font-semibold text-noku-green hover:opacity-80 transition-opacity">
+        <Link href="/admin/issues" className="flex items-center gap-1 text-sm font-semibold text-noku-green hover:opacity-80 transition-opacity">
           See All
           <svg
             width="14"
@@ -89,13 +69,17 @@ export default function ReportedIssuesCard() {
           >
             <path d="M2.917 7h8.166M7 2.917L11.083 7 7 11.083" />
           </svg>
-        </button>
+        </Link>
       </div>
 
       {/* Rows */}
-      <div className="flex flex-col divide-y divide-[#e5e5e5] flex-1">
-        {issues.map((issue, i) => (
-          <div key={i} className="flex items-center gap-3 px-6 py-4">
+      <div className="flex flex-col divide-y divide-[#e5e5e5] flex-1 w-full min-w-0">
+        {issues.slice(0, 4).map((issue, i) => (
+          <div
+            key={i}
+            onClick={() => onIssueClick?.(issue)}
+            className="flex items-center gap-3 px-6 py-4 w-full min-w-0 hover:bg-[#fafafa] transition-colors cursor-pointer"
+          >
             <span className="shrink-0">
               <AlertCircleIcon />
             </span>
@@ -105,16 +89,18 @@ export default function ReportedIssuesCard() {
               </p>
               <p className="text-xs text-[#737373]">{issue.resident}</p>
             </div>
-            <p className="flex-1 text-sm text-[#525252] truncate min-w-0">
+            <p className="flex-1 text-sm text-[#525252] line-clamp-2 min-w-0">
               {issue.preview}
             </p>
-            <IssueBadge type={issue.type} />
+            <div className="shrink-0 w-[130px] flex justify-start">
+              <IssueBadge type={issue.type} />
+            </div>
             <p className="text-xs text-[#737373] shrink-0 w-12 text-right">
               {issue.date}
             </p>
           </div>
         ))}
-        <div className="h-1 divide-y border-[#e5e5e5]" />
+        <div className="h-1" />
       </div>
     </div>
   );

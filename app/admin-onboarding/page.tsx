@@ -19,7 +19,7 @@ type Screen = "landing" | "sign-in" | "step-1" | "step-2" | "step-3" | "step-4" 
 
 export default function AdminOnboarding() {
   const [screen, setScreen] = useState<Screen>("landing");
-  const { setStructure, setBilling, setResidents, structure } = useEstateStore();
+  const { setStructure, setBilling, setResidents, setOnboardingCompletedAt, structure } = useEstateStore();
   const router = useRouter();
 
   switch (screen) {
@@ -54,7 +54,7 @@ export default function AdminOnboarding() {
     case "confirmation":
       return (
         <Confirmation
-          onDashboard={() => router.push("/admin")}
+          onDashboard={() => { setOnboardingCompletedAt(new Date().toISOString()); router.push("/admin"); }}
           onEdit={(target) => {
             const map = {
               estate:    "step-2",

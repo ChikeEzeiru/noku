@@ -34,20 +34,10 @@ function HouseholdDataIcon() {
   );
 }
 
-const alerts = [
-  {
-    icon: <FlaggedIssuesIcon />,
-    title: "Flagged issues:",
-    body: "4 residents have flagged issues that are yet to be resolved",
-    action: "View Issues",
-  },
-  {
-    icon: <HouseholdDataIcon />,
-    title: "Outdated Household data:",
-    body: "Residents' household info has not been updated in 2 months",
-    action: "View Residents",
-  },
-];
+import Link from "next/link";
+
+const BTN_SHADOW = "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)";
+const BTN_CLASS  = "self-start bg-white rounded-lg px-3.5 py-2.5 text-sm font-semibold text-noku-text-mid";
 
 export default function AlertsCard() {
   return (
@@ -58,28 +48,33 @@ export default function AlertsCard() {
       <p className="text-base font-semibold text-noku-text-mid">Alerts</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-        {alerts.map((alert, i) => (
-          <div key={i} className="flex flex-col gap-4">
-            <div className="w-8 h-8 rounded-full bg-[#fef9c3] flex items-center justify-center shrink-0">
-              {alert.icon}
-            </div>
-            <div className="flex flex-col gap-1">
-              <p className="text-sm font-medium text-[#404040]">
-                {alert.title}
-              </p>
-              <p className="text-sm text-[#525252] text-pretty">{alert.body}</p>
-            </div>
-            <button
-              className="self-start bg-white rounded-lg px-3.5 py-2.5 text-sm font-semibold text-noku-text-mid"
-              style={{
-                boxShadow:
-                  "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)",
-              }}
-            >
-              {alert.action}
-            </button>
+        {/* Flagged issues */}
+        <div className="flex flex-col gap-4">
+          <div className="w-8 h-8 rounded-full bg-[#fef9c3] flex items-center justify-center shrink-0">
+            <FlaggedIssuesIcon />
           </div>
-        ))}
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-medium text-[#404040]">Flagged issues:</p>
+            <p className="text-sm text-[#525252] text-pretty">4 residents have flagged issues that are yet to be resolved</p>
+          </div>
+          <Link href="/admin/residents" className={BTN_CLASS} style={{ boxShadow: BTN_SHADOW }}>
+            View Issues
+          </Link>
+        </div>
+
+        {/* Outdated household data */}
+        <div className="flex flex-col gap-4">
+          <div className="w-8 h-8 rounded-full bg-[#fef9c3] flex items-center justify-center shrink-0">
+            <HouseholdDataIcon />
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-medium text-[#404040]">Outdated Household data:</p>
+            <p className="text-sm text-[#525252] text-pretty">Residents' household info has not been updated in 2 months</p>
+          </div>
+          <Link href="/admin/residents" className={BTN_CLASS} style={{ boxShadow: BTN_SHADOW }}>
+            View Residents
+          </Link>
+        </div>
       </div>
     </div>
   );

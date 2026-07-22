@@ -2,6 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { useEstateStore } from "@/store/estateStore";
+import type { DrawerRow } from "@/components/admin/payments/ResidentDrawer";
+import type { PreselectedUnit } from "@/components/admin/payments/SendReminderModal";
+import FilterPanel, { type FilterField, type AppliedFilter } from "@/components/admin/shared/FilterPanel";
+
+const FILTER_FIELDS: FilterField[] = [
+  { key: "paymentStatus", label: "Payment Status", type: "multiselect", operators: ["Is", "Is not"], options: ["Paid", "Unpaid", "Overdue"] },
+  { key: "channel",       label: "Channel",        type: "multiselect", operators: ["Is", "Is not"], options: ["In app", "External"] },
+];
 
 function SearchIcon() {
   return (
@@ -43,13 +51,6 @@ function BellIcon() {
   );
 }
 
-function HistoryIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M15.1333 9L13.8004 7.66667L12.4666 9M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C10.2013 2 12.1257 3.18542 13.1697 4.95273M8 4.66667V8L10 9.33333" />
-    </svg>
-  );
-}
 
 function ArrowLeftIcon() {
   return (
@@ -91,10 +92,11 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
   );
 }
 
-function ActionBtn({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
+function ActionBtn({ children, disabled = false, onClick }: { children: React.ReactNode; disabled?: boolean; onClick?: () => void }) {
   return (
     <button
       disabled={disabled}
+      onClick={onClick}
       className={`w-7 h-7 flex items-center justify-center rounded border border-[#e5e5e5] bg-white transition-colors shrink-0 ${
         disabled ? "opacity-30 cursor-not-allowed text-[#5B5B4B]" : "text-[#5B5B4B] hover:bg-[#fafafa]"
       }`}
@@ -107,12 +109,17 @@ function ActionBtn({ children, disabled = false }: { children: React.ReactNode; 
 
 const PAGE_SIZE = 10;
 
-export default function ReceivedPaymentsTable() {
+export default function ReceivedPaymentsTable({ onRowClick, onBellClick }: {
+  onRowClick?: (row: DrawerRow) => void;
+  onBellClick?: (unit: PreselectedUnit) => void;
+}) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState<AppliedFilter[]>([]);
 
-  const structure = useEstateStore((s) => s.structure);
-  const residents  = useEstateStore((s) => s.residents);
+  const structure        = useEstateStore((s) => s.structure);
+  const residents        = useEstateStore((s) => s.residents);
+  const paymentOverrides = useEstateStore((s) => s.paymentOverrides);
 
   const allRows = useMemo(() => {
     if (!structure) return [];
@@ -123,6 +130,10 @@ export default function ReceivedPaymentsTable() {
       status: PaymentStatus;
       datePaid: string;
       channel: string;
+      phone: string;
+      occupants: string;
+      bedrooms: string;
+      acUnits: string;
     }[] = [];
 
     const totalUnits = structure.aptCounts.reduce((a, b) => a + b, 0);
@@ -130,19 +141,29 @@ export default function ReceivedPaymentsTable() {
     structure.buildingNames.forEach((name, bi) => {
       const count = structure.aptCounts[bi] ?? 0;
       for (let u = 1; u <= count; u++) {
-        const slotIndex = rows.length;
-        const stored    = residents[slotIndex];
+        const slotIndex   = rows.length;
+        const stored      = residents[slotIndex];
         const hasResident = stored?.name?.trim() !== "";
-        const status    = simulateStatus(slotIndex, totalUnits);
-        const paidIdx   = slotIndex % SIMULATED_DATES.length;
+        const unitLabel   = `Building ${name}, ${structure.aptNaming} ${u}`;
+        const override    = paymentOverrides[unitLabel];
+        const paidIdx     = slotIndex % SIMULATED_DATES.length;
+
+        const status   = override ? override.status : simulateStatus(slotIndex, totalUnits);
+        const datePaid = override ? override.datePaid : (status === "Paid" ? SIMULATED_DATES[paidIdx] : "--");
+        const channel  = override ? override.channel  : (status === "Paid" ? SIMULATED_CHANNELS[paidIdx] : "--");
+        const amount   = override ? override.amount   : "₦95,000";
 
         rows.push({
-          building:  `Building ${name}, ${structure.aptNaming} ${u}`,
+          building: unitLabel,
           resident:  hasResident ? stored.name : "—",
-          amount:    "₦95,000",
+          amount,
           status,
-          datePaid:  status === "Paid" ? SIMULATED_DATES[paidIdx] : "--",
-          channel:   status === "Paid" ? SIMULATED_CHANNELS[paidIdx] : "--",
+          datePaid,
+          channel,
+          phone:     hasResident ? stored.phone     : "—",
+          occupants: hasResident ? stored.occupants : "—",
+          bedrooms:  hasResident ? stored.bedrooms  : "—",
+          acUnits:   hasResident ? stored.acUnits   : "—",
         });
       }
     });
@@ -151,17 +172,27 @@ export default function ReceivedPaymentsTable() {
     rows.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
 
     return rows;
-  }, [structure, residents]);
+  }, [structure, residents, paymentOverrides]);
 
   const filtered = useMemo(() => {
+    let rows = allRows;
     const q = search.toLowerCase();
-    if (!q) return allRows;
-    return allRows.filter(
-      (r) =>
-        r.building.toLowerCase().includes(q) ||
-        r.resident.toLowerCase().includes(q)
-    );
-  }, [allRows, search]);
+    if (q) rows = rows.filter(r => r.building.toLowerCase().includes(q) || r.resident.toLowerCase().includes(q));
+    for (const f of activeFilters) {
+      const v = f.value;
+      const hasValue = Array.isArray(v) ? v.length > 0 : (v as string).trim() !== "";
+      if (!hasValue) continue;
+      rows = rows.filter(r => {
+        const itemVal = f.field === "paymentStatus" ? r.status : f.field === "channel" ? r.channel : "";
+        if (Array.isArray(v)) {
+          const match = v.some(opt => opt.toLowerCase() === itemVal.toLowerCase());
+          return f.operator === "Is not" ? !match : match;
+        }
+        return true;
+      });
+    }
+    return rows;
+  }, [allRows, search, activeFilters]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage   = Math.min(page, totalPages);
@@ -191,14 +222,10 @@ export default function ReceivedPaymentsTable() {
             style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
           />
         </div>
-        <button
-          className="flex items-center gap-1.5 bg-white rounded-[8px] px-[14px] py-[9px] text-sm font-semibold text-[#474739]"
-          style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}
-        >
-          <FilterIcon />
-          Filters
-          <ChevronDownIcon />
-        </button>
+        <FilterPanel
+          fields={FILTER_FIELDS}
+          onApply={(fs) => { setActiveFilters(fs); setPage(1); }}
+        />
         <div className="flex-1" />
         <button
           className="flex items-center gap-2 bg-white rounded-[8px] px-[14px] py-[9px] text-sm font-semibold text-[#474739]"
@@ -228,17 +255,30 @@ export default function ReceivedPaymentsTable() {
             </thead>
             <tbody className="divide-y divide-[#e5e5e5]">
               {pageRows.map((row, i) => (
-                <tr key={i} className="hover:bg-[#fafafa] transition-colors">
+                <tr
+                  key={i}
+                  onClick={() => onRowClick?.({ building: row.building, resident: row.resident, amount: row.amount, status: row.status, phone: row.phone, occupants: row.occupants, bedrooms: row.bedrooms, acUnits: row.acUnits })}
+                  className="hover:bg-[#fafafa] transition-colors cursor-pointer"
+                >
                   <td className="px-6 py-3.5 text-sm text-[#171717] whitespace-nowrap">{row.building}</td>
                   <td className="px-6 py-3.5 text-sm text-[#404040] whitespace-nowrap">{row.resident}</td>
                   <td className="px-6 py-3.5 text-sm text-[#404040] whitespace-nowrap">{row.amount}</td>
                   <td className="px-6 py-3.5"><StatusBadge status={row.status} /></td>
                   <td className="px-6 py-3.5 text-sm text-[#525252] whitespace-nowrap">{row.datePaid}</td>
                   <td className="px-6 py-3.5 text-sm text-[#525252] whitespace-nowrap">{row.channel}</td>
-                  <td className="px-6 py-3.5">
+                  <td className="px-6 py-3.5" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1.5">
-                      <ActionBtn disabled={row.status === "Paid"}><BellIcon /></ActionBtn>
-                      <ActionBtn><HistoryIcon /></ActionBtn>
+                      <ActionBtn
+                        disabled={row.status === "Paid"}
+                        onClick={row.status !== "Paid" ? () => onBellClick?.({
+                          label:    row.building,
+                          resident: row.resident,
+                          amount:   row.amount,
+                          status:   row.status as "Unpaid" | "Overdue",
+                        }) : undefined}
+                      >
+                        <BellIcon />
+                      </ActionBtn>
                     </div>
                   </td>
                 </tr>
@@ -260,13 +300,13 @@ export default function ReceivedPaymentsTable() {
             <ArrowLeftIcon />
             Previous
           </button>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-[2px]">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
-                  safePage === p ? "bg-noku-green text-white font-semibold" : "text-[#525252] hover:bg-[#f5f5f5]"
+                className={`w-9 h-9 rounded-[8px] flex items-center justify-center text-sm font-medium transition-opacity ${
+                  safePage === p ? "bg-[#f4f4f0] text-[#404040]" : "text-[#737373] opacity-40 hover:opacity-70"
                 }`}
               >
                 {p}

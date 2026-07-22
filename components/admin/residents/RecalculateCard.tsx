@@ -88,11 +88,23 @@ function Gauge({ inReview, total }: { inReview: number; total: number }) {
   );
 }
 
-export default function RecalculateCard() {
-  const structure = useEstateStore((s) => s.structure);
+function formatMonthYear(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
 
-  const totalUnits  = structure?.aptCounts.reduce((a, b) => a + b, 0) ?? 0;
-  const pendingCount = 0; // No residents have updated data since onboarding
+export default function RecalculateCard() {
+  const structure            = useEstateStore((s) => s.structure);
+  const lastRecalculatedAt   = useEstateStore((s) => s.lastRecalculatedAt);
+  const onboardingCompletedAt = useEstateStore((s) => s.onboardingCompletedAt);
+
+  const totalUnits   = structure?.aptCounts.reduce((a, b) => a + b, 0) ?? 0;
+  const pendingCount = 0;
+
+  const dateSubtitle = lastRecalculatedAt
+    ? `last recalculated in ${formatMonthYear(lastRecalculatedAt)}`
+    : onboardingCompletedAt
+    ? `set up in ${formatMonthYear(onboardingCompletedAt)}`
+    : null;
 
   return (
     <div className="bg-white border border-[#e5e5e5] rounded-xl p-6 flex flex-col gap-5 h-full" style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
@@ -100,7 +112,7 @@ export default function RecalculateCard() {
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <p className="text-base font-semibold text-noku-heading">Recalculate power costs</p>
-          <p className="text-xs text-[#737373]">last recalculated in April 2026</p>
+          {dateSubtitle && <p className="text-xs text-[#737373]">{dateSubtitle}</p>}
         </div>
         <InfoTooltip text="Shows how many apartments have pending household data updates that need review before power costs can be recalculated." />
       </div>

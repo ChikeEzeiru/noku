@@ -2,6 +2,13 @@
 
 import { useState, useMemo } from "react";
 import { useEstateStore } from "@/store/estateStore";
+import type { ResidentDrawerRow } from "@/components/admin/residents/ResidentDetailDrawer";
+import FilterPanel, { type FilterField, type AppliedFilter } from "@/components/admin/shared/FilterPanel";
+
+const FILTER_FIELDS: FilterField[] = [
+  { key: "paymentStatus", label: "Payment Status", type: "multiselect", operators: ["Is", "Is not"], options: ["Paid", "Unpaid", "Overdue"] },
+  { key: "bedrooms",      label: "Bedrooms",       type: "multiselect", operators: ["Is", "Is not"], options: ["1", "2", "3", "4"] },
+];
 
 function SearchIcon() {
   return (
@@ -52,59 +59,95 @@ function ArrowRightIcon() {
 }
 
 const ROWS_PER_PAGE = 10;
-const LAST_UPDATED = "Jun 15, 2023";
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function resolveLastUpdated(updatedAt?: string, addedAt?: string, onboardingCompletedAt?: string): string {
+  const iso = updatedAt ?? addedAt ?? onboardingCompletedAt;
+  return iso ? formatDate(iso) : "—";
+}
+
+type PaymentStatus = "Paid" | "Unpaid" | "Overdue";
+
+function simulateStatus(slotIndex: number, totalUnits: number): PaymentStatus {
+  if (slotIndex >= totalUnits - 2) return "Overdue";
+  if (slotIndex >= totalUnits - 4) return "Unpaid";
+  return "Paid";
+}
 
 type TableRow = {
   buildingUnit: string;
   occupants: string;
   resident: string;
+  phone: string;
   bedrooms: string;
   acUnits: string;
   sharePct: string;
   lastUpdated: string;
+  addedAt?: string;
   status: "Active" | "Vacant" | "View";
+  paymentStatus: PaymentStatus;
 };
 
-export default function AllResidentsTable() {
+export default function AllResidentsTable({ onRowClick }: { onRowClick?: (row: ResidentDrawerRow) => void }) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState<AppliedFilter[]>([]);
 
-  const { structure, residents } = useEstateStore();
+  const { structure, residents, onboardingCompletedAt, paymentOverrides } = useEstateStore();
 
   const allRows = useMemo<TableRow[]>(() => {
     if (!structure) return [];
 
+    const totalUnits = structure.aptCounts.reduce((a, b) => a + b, 0);
     const rows: TableRow[] = [];
     structure.buildingNames.forEach((name, bi) => {
       const count = structure.aptCounts[bi] ?? 0;
       for (let u = 1; u <= count; u++) {
-        const slotIndex = rows.length;
-        const stored = residents[slotIndex];
+        const slotIndex   = rows.length;
+        const stored      = residents[slotIndex];
         const hasResident = stored && stored.name.trim() !== "";
+        const unitLabel   = `Building ${name}, ${structure.aptNaming} ${u}`;
+        const override    = paymentOverrides[unitLabel];
         rows.push({
-          buildingUnit: `Building ${name}, ${structure.aptNaming} ${u}`,
-          occupants: hasResident ? (stored.occupants || "—") : "—",
-          resident: hasResident ? stored.name : "",
-          bedrooms: hasResident ? (stored.bedrooms || "—") : "—",
-          acUnits: hasResident ? (stored.acUnits || "—") : "—",
-          sharePct: hasResident ? "3.2" : "—",
-          lastUpdated: hasResident ? LAST_UPDATED : "—",
-          status: hasResident ? "Active" : "Vacant",
+          buildingUnit:  unitLabel,
+          occupants:     hasResident ? (stored.occupants || "—") : "—",
+          resident:      hasResident ? stored.name : "",
+          phone:         hasResident ? (stored.phone    || "—") : "—",
+          bedrooms:      hasResident ? (stored.bedrooms || "—") : "—",
+          acUnits:       hasResident ? (stored.acUnits  || "—") : "—",
+          sharePct:      hasResident ? "3.2" : "—",
+          lastUpdated:   hasResident ? resolveLastUpdated(stored.updatedAt, stored.addedAt, onboardingCompletedAt) : "—",
+          addedAt:       hasResident ? stored.addedAt : undefined,
+          status:        hasResident ? "Active" : "Vacant",
+          paymentStatus: override ? override.status : simulateStatus(slotIndex, totalUnits),
         });
       }
     });
     return rows;
-  }, [structure, residents]);
+  }, [structure, residents, onboardingCompletedAt, paymentOverrides]);
 
   const filtered = useMemo(() => {
+    let rows = allRows;
     const q = search.toLowerCase();
-    if (!q) return allRows;
-    return allRows.filter(
-      (r) =>
-        r.buildingUnit.toLowerCase().includes(q) ||
-        r.resident.toLowerCase().includes(q)
-    );
-  }, [allRows, search]);
+    if (q) rows = rows.filter(r => r.buildingUnit.toLowerCase().includes(q) || r.resident.toLowerCase().includes(q));
+    for (const f of activeFilters) {
+      const v = f.value;
+      const hasValue = Array.isArray(v) ? v.length > 0 : (v as string).trim() !== "";
+      if (!hasValue) continue;
+      rows = rows.filter(r => {
+        const itemVal = f.field === "paymentStatus" ? r.paymentStatus : f.field === "bedrooms" ? r.bedrooms : "";
+        if (Array.isArray(v)) {
+          const match = v.some(opt => opt.toLowerCase() === itemVal.toLowerCase());
+          return f.operator === "Is not" ? !match : match;
+        }
+        return true;
+      });
+    }
+    return rows;
+  }, [allRows, search, activeFilters]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -133,14 +176,10 @@ export default function AllResidentsTable() {
               style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
             />
           </div>
-          <button
-            className="flex items-center gap-1.5 bg-white rounded-[8px] px-[14px] py-[9px] text-sm font-semibold text-[#474739]"
-            style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}
-          >
-            <FilterIcon />
-            Filters
-            <ChevronDownIcon />
-          </button>
+          <FilterPanel
+            fields={FILTER_FIELDS}
+            onApply={(fs) => { setActiveFilters(fs); setPage(1); }}
+          />
           <button
             className="flex items-center gap-2 bg-white rounded-[8px] px-[14px] py-[9px] text-sm font-semibold text-[#474739]"
             style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05), inset 0px 0px 0px 1px rgba(0,0,0,0.18), inset 0px -2px 0px 0px rgba(0,0,0,0.05)" }}
@@ -170,7 +209,7 @@ export default function AllResidentsTable() {
             </thead>
             <tbody className="divide-y divide-[#e5e5e5]">
               {pageRows.map((row, i) => (
-                <tr key={i} className="hover:bg-[#fafafa] transition-colors">
+                <tr key={i} onClick={() => onRowClick?.({ buildingUnit: row.buildingUnit, resident: row.resident, amount: "₦95,000", paymentStatus: row.paymentStatus, phone: row.phone, occupants: row.occupants, bedrooms: row.bedrooms, acUnits: row.acUnits, addedAt: row.addedAt })} className="hover:bg-[#fafafa] transition-colors cursor-pointer">
                   <td className="px-6 py-3.5 text-sm text-[#171717] whitespace-nowrap">{row.buildingUnit}</td>
                   <td className="px-6 py-3.5 text-sm text-[#404040] text-center">{row.occupants}</td>
                   <td className="px-6 py-3.5 text-sm text-[#404040] whitespace-nowrap">
@@ -211,7 +250,7 @@ export default function AllResidentsTable() {
             No residents yet.
           </div>
         ) : pageRows.map((row, i) => (
-          <div key={i} className="px-4 py-4 flex flex-col gap-2">
+          <div key={i} onClick={() => onRowClick?.({ buildingUnit: row.buildingUnit, resident: row.resident, amount: "₦95,000", paymentStatus: row.paymentStatus, phone: row.phone, occupants: row.occupants, bedrooms: row.bedrooms, acUnits: row.acUnits, addedAt: row.addedAt })} className="px-4 py-4 flex flex-col gap-2 cursor-pointer hover:bg-[#fafafa] transition-colors">
             <div className="flex items-start justify-between gap-2">
               <p className="text-sm font-semibold text-noku-heading">{row.buildingUnit}</p>
               {row.status === "Active" && (
@@ -252,13 +291,13 @@ export default function AllResidentsTable() {
             <ArrowLeftIcon />
             Previous
           </button>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-[2px]">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
-                  safePage === p ? "bg-noku-green text-white font-semibold" : "text-[#525252] hover:bg-[#f5f5f5]"
+                className={`w-9 h-9 rounded-[8px] flex items-center justify-center text-sm font-medium transition-opacity ${
+                  safePage === p ? "bg-[#f4f4f0] text-[#404040]" : "text-[#737373] opacity-40 hover:opacity-70"
                 }`}
               >
                 {p}

@@ -24,25 +24,34 @@ function MegaphoneIcon() {
   );
 }
 
-const actions = [
-  {
-    icon: <ReceiptIcon />,
-    title: "Log Expense",
-    body: "Record fuel purchases, or maintenance bills",
-  },
-  {
-    icon: <BellIcon />,
-    title: "Send Reminder",
-    body: "Notify specific or all residents",
-  },
-  {
-    icon: <MegaphoneIcon />,
-    title: "New Announcement",
-    body: "Send important info to all residents via a blast",
-  },
-];
+type Props = {
+  onSendReminder?:    () => void;
+  onLogExpense?:      () => void;
+  onNewAnnouncement?: () => void;
+};
 
-export default function QuickActionsCard() {
+export default function QuickActionsCard({ onSendReminder, onLogExpense, onNewAnnouncement }: Props) {
+  const actions = [
+    {
+      icon:    <ReceiptIcon />,
+      title:   "Log Expense",
+      body:    "Record fuel purchases, or maintenance bills",
+      onClick: onLogExpense,
+    },
+    {
+      icon:    <BellIcon />,
+      title:   "Send Reminder",
+      body:    "Notify specific or all residents",
+      onClick: onSendReminder,
+    },
+    {
+      icon:    <MegaphoneIcon />,
+      title:   "New Announcement",
+      body:    "Send important info to all residents via a blast",
+      onClick: onNewAnnouncement,
+    },
+  ];
+
   return (
     <div className="bg-white border border-[#e5e5e5] rounded-xl p-6 flex flex-col gap-5" style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
       <p className="text-base font-semibold text-noku-heading">Quick Actions</p>
@@ -51,6 +60,7 @@ export default function QuickActionsCard() {
         {actions.map((action, i) => (
           <button
             key={i}
+            onClick={action.onClick}
             className="text-left bg-white border border-[#e5e5e5] rounded-xl p-4 flex flex-col gap-3 hover:bg-noku-bg transition-colors"
             style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
           >

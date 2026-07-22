@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import type { EstateStructure } from "@/components/admin-onboarding/Step3";
 
-export type Resident = { name: string; phone: string; occupants: string; bedrooms: string; acUnits: string };
+export type Resident = { name: string; phone: string; occupants: string; bedrooms: string; acUnits: string; addedAt?: string; updatedAt?: string };
 
 type Props = {
   estateStructure: EstateStructure;
@@ -191,8 +191,8 @@ function DropZone({ onUpload }: { onUpload: (file: File) => void }) {
         className="w-full flex flex-col items-center gap-3 bg-white border border-[#e5e5e5] rounded-[12px] px-6 py-4 hover:bg-[#fafafa] transition-colors"
       >
         <div
-          className="w-10 h-10 flex items-center justify-center rounded-[8px] border border-[#d4d4d4] bg-white"
-          style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
+          className="w-10 h-10 flex items-center justify-center rounded-lg border border-noku-border-primary"
+          style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
         >
           <UploadCloudIcon />
         </div>

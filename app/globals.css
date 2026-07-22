@@ -151,3 +151,45 @@ button, a, [role="button"] {
   }
 }
 
+/* Plan 009: admin toast enter/exit */
+.toast-enter {
+  transition: opacity 200ms ease,
+              transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .toast-enter {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-enter { transition: opacity 150ms ease; }
+  @starting-style { .toast-enter { transform: none; } }
+  @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+}
+
+/* Plan 013: admin mobile sidebar entry */
+.sidebar-enter {
+  transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+              transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .sidebar-enter {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-enter { transition: opacity 150ms ease; }
+  @starting-style { .sidebar-enter { transform: none; } }
+}
+

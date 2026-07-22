@@ -34,20 +34,36 @@ function BellIcon() {
   );
 }
 
-const actions = [
-  {
-    icon: <ReceiptIcon />,
-    title: "Log External Collection",
-    body: "Record collections received from sources other than Noku",
-  },
-  {
-    icon: <BellIcon />,
-    title: "Send Bulk Reminder",
-    body: "Notify specific or all residents",
-  },
-];
+import type { ReactNode } from "react";
 
-export default function QuickActionsCard() {
+type Action = {
+  icon: ReactNode;
+  title: string;
+  body: string;
+  onClick?: () => void;
+};
+
+type Props = {
+  onLogCollection?: () => void;
+  onBulkReminder?:  () => void;
+};
+
+export default function QuickActionsCard({ onLogCollection, onBulkReminder }: Props) {
+  const actions: Action[] = [
+    {
+      icon:    <ReceiptIcon />,
+      title:   "Log External Collection",
+      body:    "Record collections received from sources other than Noku",
+      onClick: onLogCollection,
+    },
+    {
+      icon:    <BellIcon />,
+      title:   "Send Bulk Reminder",
+      body:    "Notify specific or all residents",
+      onClick: onBulkReminder,
+    },
+  ];
+
   return (
     <div
       className="bg-white border border-[#e5e5e5] rounded-xl p-6 flex flex-col gap-5 h-full"
@@ -59,11 +75,12 @@ export default function QuickActionsCard() {
         {actions.map((action, i) => (
           <button
             key={i}
+            onClick={action.onClick}
             className="text-left flex items-center gap-3 border border-[#e5e5e5] rounded-xl p-4 hover:bg-noku-secondary-alt transition-colors"
             style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.04)" }}
           >
             <div
-              className="w-10 h-10 rounded-lg border border-[#e5e5e5] flex items-center justify-center text-[#404040] shrink-0"
+              className="w-10 h-10 rounded-lg border border-noku-border-primary flex items-center justify-center text-[#404040] shrink-0"
               style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
             >
               {action.icon}

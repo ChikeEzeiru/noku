@@ -43,7 +43,7 @@ export default function PaymentSuccess({ onBackToHome, onViewReceipt }: PaymentS
           <div className="flex flex-col items-center gap-4">
             <div
               className="w-10 h-10 rounded-lg bg-noku-success flex items-center justify-center animate-[successPop_300ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_both]"
-              style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.18), inset 0 -2px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)" }}
+              style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
             >
               <CheckCircleIcon />
             </div>
