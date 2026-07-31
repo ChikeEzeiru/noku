@@ -34,7 +34,7 @@ const TYPE_DOT: Record<IssueBadgeType, string> = {
 function IssueBadge({ type }: { type: IssueBadgeType }) {
   return (
     <span
-      className="inline-flex items-center gap-1 bg-white border border-[#d4d4d4] rounded-[6px] px-2 py-1 whitespace-nowrap shrink-0"
+      className="inline-flex items-center gap-1 bg-white border border-noku-border-primary rounded-md px-2 py-1 whitespace-nowrap shrink-0"
       style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
     >
       <span
@@ -89,7 +89,7 @@ export default function ReportedIssuesCard({ onIssueClick }: Props) {
           <div
             key={i}
             onClick={() => onIssueClick?.(issue)}
-            className="flex items-center gap-3 px-6 py-4 w-full min-w-0 hover:bg-[#fafafa] transition-colors cursor-pointer"
+            className="flex items-center gap-3 px-6 py-4 w-full min-w-0 hover:bg-noku-secondary-alt transition-colors cursor-pointer"
           >
             <span className="shrink-0">
               <AlertCircleIcon />
@@ -103,7 +103,7 @@ export default function ReportedIssuesCard({ onIssueClick }: Props) {
             <p className="flex-1 text-sm text-[#525252] line-clamp-2 min-w-0">
               {issue.preview}
             </p>
-            <div className="shrink-0 w-[130px] flex justify-start">
+            <div className="shrink-0 w-32.5 flex justify-start">
               <IssueBadge type={issue.type} />
             </div>
             <p className="text-xs text-[#737373] shrink-0 w-12 text-right">
