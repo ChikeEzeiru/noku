@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import type { IssueBadgeType, ReportedIssue } from "@/components/admin/residents/issuesData";
+import type {
+  IssueBadgeType,
+  ReportedIssue,
+} from "@/components/admin/residents/issuesData";
 import { issues } from "@/components/admin/residents/issuesData";
 
 function AlertCircleIcon() {
@@ -23,8 +26,8 @@ function AlertCircleIcon() {
 }
 
 const TYPE_DOT: Record<IssueBadgeType, string> = {
-  "Power Issue":   "#f59e0b",
-  "Bill Issue":    "#ef4444",
+  "Power Issue": "#f59e0b",
+  "Bill Issue": "#ef4444",
   "Payment Issue": "#3b82f6",
 };
 
@@ -34,8 +37,13 @@ function IssueBadge({ type }: { type: IssueBadgeType }) {
       className="inline-flex items-center gap-1 bg-white border border-[#d4d4d4] rounded-[6px] px-2 py-1 whitespace-nowrap shrink-0"
       style={{ boxShadow: "0 1px 1px rgba(0,0,0,0.05)" }}
     >
-      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: TYPE_DOT[type] }} />
-      <span className="text-[12px] font-medium text-[#404040] leading-4">{type}</span>
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ backgroundColor: TYPE_DOT[type] }}
+      />
+      <span className="text-[12px] font-medium text-[#404040] leading-4">
+        {type}
+      </span>
     </span>
   );
 }
@@ -55,7 +63,10 @@ export default function ReportedIssuesCard({ onIssueClick }: Props) {
         <p className="text-base font-semibold text-noku-heading">
           Reported Issues
         </p>
-        <Link href="/admin/issues" className="flex items-center gap-1 text-sm font-semibold text-noku-green hover:opacity-80 transition-opacity">
+        <Link
+          href="/admin/issues"
+          className="flex items-center gap-1 text-sm font-semibold text-noku-green hover:opacity-80 transition-opacity"
+        >
           See All
           <svg
             width="14"
